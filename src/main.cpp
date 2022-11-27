@@ -4,7 +4,7 @@
 #include "operators.hpp"
 #include "device_manager.hpp"
 
-drivers::DeviceManager driver_manager;
+drivers::DeviceManager device_manager;
 timer::Timer timer1;
 
 void setup()
@@ -18,7 +18,7 @@ void loop()
 {
   timer1.wait_for_timer();
 
-  driver_manager.display.display_text();
-  driver_manager.exhaust_fan.apply_rpm(2692);
-  driver_manager.pellet_spiral.rotate_spiral();
+  device_manager.display.display_text();
+  device_manager.exhaust_fan.apply_rpm(2692);
+  device_manager.pellet_spiral.rotate_spiral();
 }
