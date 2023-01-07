@@ -10,7 +10,7 @@ class StateMachine
 {
 public:
     State *currentState;
-    AvailableStates *avStates;
+    AvailableStates *availableStates;
 
     StateMachine(AvailableStates *avStates);
     void run();

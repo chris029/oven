@@ -2,10 +2,10 @@
 
 #include "operators.hpp"
 
-StateMachine::StateMachine(AvailableStates *availableStates)
+StateMachine::StateMachine(AvailableStates *avStates)
 {
-    avStates = availableStates;
-    currentState = &avStates->idle;
+    availableStates = avStates;
+    currentState = &availableStates->idle;
 }
 
 void StateMachine::setState(State &newState)

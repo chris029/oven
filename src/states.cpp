@@ -6,7 +6,7 @@ void Idle::execute(StateMachine *sm)
 {
     // while (true) that waits for a button hold
     Serial << "State Idle is running...\n";
-    sm->setState(sm->avStates->startUp);
+    sm->setState(sm->availableStates->startUp);
 }
 
 void Idle::exit(StateMachine *sm)
@@ -17,7 +17,7 @@ void Idle::exit(StateMachine *sm)
 void StartUp::execute(StateMachine *sm)
 {
     Serial << "State StartUp is running...\n";
-    sm->setState(sm->avStates->programOne);
+    sm->setState(sm->availableStates->programOne);
 }
 
 void StartUp::exit(StateMachine *sm)
@@ -28,7 +28,7 @@ void StartUp::exit(StateMachine *sm)
 void ProgramOne::execute(StateMachine *sm)
 {
     Serial << "State ProgramOne is running...\n";
-    sm->setState(sm->avStates->idle);
+    sm->setState(sm->availableStates->idle);
 }
 
 void ProgramOne::exit(StateMachine *sm)

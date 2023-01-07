@@ -23,7 +23,7 @@ void loop()
   timer1.wait_for_timer();
 
   state_machine.run();
-  device_manager.display.display_text();
-  device_manager.exhaust_fan.apply_rpm(2692);
-  device_manager.pellet_spiral.rotate_spiral();
+  //device_manager.display.display_text();
+  //device_manager.exhaust_fan.apply_rpm(2692);
+  //device_manager.pellet_spiral.rotate_spiral();
 }
