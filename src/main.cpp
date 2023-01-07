@@ -1,9 +1,13 @@
 #include <Arduino.h>
 
-#include "timer.hpp"
 #include "operators.hpp"
-#include "device_manager.hpp"
 
+#include "timer.hpp"
+#include "device_manager.hpp"
+#include "state_machine.hpp"
+
+AvailableStates availableStates;
+StateMachine state_machine(&availableStates);
 drivers::DeviceManager device_manager;
 timer::Timer timer1;
 
@@ -18,6 +22,7 @@ void loop()
 {
   timer1.wait_for_timer();
 
+  state_machine.run();
   device_manager.display.display_text();
   device_manager.exhaust_fan.apply_rpm(2692);
   device_manager.pellet_spiral.rotate_spiral();
