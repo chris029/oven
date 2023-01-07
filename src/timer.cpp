@@ -4,7 +4,7 @@
 #include "operators.hpp"
 
 // ISR is set for 1kHz -> timerCnt increments every 1ms
-#define EXECUTION_WINDOW 100
+#define EXECUTION_WINDOW 100 // [ms]
 
 volatile int timerCnt = 0;
 
@@ -41,7 +41,7 @@ void timer::Timer::wait_for_timer()
 
     while (timerCnt < 1000)
     {
-        // wait 100ms
+        // wait 1000ms
     }
 
     timerCnt = 0;
