@@ -8,6 +8,11 @@ StateMachine::StateMachine(AvailableStates *avStates)
     current_state = &available_states->idle;
 }
 
+void StateMachine::SetupStateMachine()
+{
+    StateMachine::device_manager.display.SetupDisplay();
+}
+
 void StateMachine::SetState(State &newState)
 {
     current_state->Exit(this);

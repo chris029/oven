@@ -7,6 +7,8 @@
 CartridgeHeater::CartridgeHeater()
 {
     pinMode(CARTRIDGE_HEATER_RELAY, OUTPUT);
+    // HIGH turns off a relay
+    digitalWrite(CARTRIDGE_HEATER_RELAY, HIGH);
 }
 
 void CartridgeHeater::Start()
