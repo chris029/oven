@@ -29,7 +29,7 @@ void loop()
   device_manager.pellet_spiral.Rotate();
   device_manager.pellet_spiral.SetDosingMode(
       device_manager.pellet_spiral.kAvailableDosingModes.start_up);
-  device_manager.exhaust_fan.Start();
   device_manager.exhaust_fan.SetRPM(6969);
   device_manager.exhaust_fan.Start();
+  device_manager.cartridge_heater.Start();
 }
