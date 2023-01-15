@@ -1,8 +1,25 @@
+#include <Arduino.h>
+
 #include "exhaust_fan.hpp"
 #include "operators.hpp"
 
-void drivers::ExhaustFan::apply_rpm(int new_rpm)
+void ExhaustFan::SetRPM(int rotation_speed)
 {
-    rpm = new_rpm;
-    Serial << "New rpm value = " << rpm << "\n";
+    ExhaustFan::rpm = rotation_speed;
+}
+
+int ExhaustFan::GetRPM()
+{
+    return ExhaustFan::rpm;
+}
+
+void ExhaustFan::Start()
+{
+    // TODO: triac board handling
+    Serial << "Fan rotates at RPM: " << rpm << "\n";
+}
+
+void ExhaustFan::Stop()
+{
+    // TODO: triac board handling
 }

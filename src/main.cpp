@@ -23,10 +23,13 @@ void loop()
   timer1.wait_for_timer();
 
   state_machine.run();
+
   device_manager.display.DisplayState(
       device_manager.display.kStateLabel.idle);
   device_manager.pellet_spiral.Rotate();
   device_manager.pellet_spiral.SetDosingMode(
       device_manager.pellet_spiral.kAvailableDosingModes.start_up);
-  // device_manager.exhaust_fan.apply_rpm(2692);
+  device_manager.exhaust_fan.Start();
+  device_manager.exhaust_fan.SetRPM(6969);
+  device_manager.exhaust_fan.Start();
 }
