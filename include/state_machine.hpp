@@ -9,10 +9,10 @@ struct AvailableStates;
 class StateMachine
 {
 public:
-    State *currentState;
-    AvailableStates *availableStates;
+    State *current_state;
+    AvailableStates *available_states;
 
-    StateMachine(AvailableStates *avStates);
-    void run();
-    void setState(State &newState);
+    StateMachine(AvailableStates *av_states);
+    void Run();
+    void SetState(State &new_state);
 };

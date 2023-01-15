@@ -4,19 +4,19 @@
 
 StateMachine::StateMachine(AvailableStates *avStates)
 {
-    availableStates = avStates;
-    currentState = &availableStates->idle;
+    available_states = avStates;
+    current_state = &available_states->idle;
 }
 
-void StateMachine::setState(State &newState)
+void StateMachine::SetState(State &newState)
 {
-    currentState->exit(this);
-    currentState = &newState;
-    currentState->enter(this);
+    current_state->Exit(this);
+    current_state = &newState;
+    current_state->Enter(this);
 }
 
-void StateMachine::run()
+void StateMachine::Run()
 {
     // Delegate the task of determining the next state to the current state!
-    currentState->execute(this);
+    current_state->Execute(this);
 }

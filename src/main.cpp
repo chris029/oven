@@ -6,23 +6,23 @@
 #include "device_manager.hpp"
 #include "state_machine.hpp"
 
-AvailableStates availableStates;
-StateMachine state_machine(&availableStates);
-drivers::DeviceManager device_manager;
-timer::Timer timer1;
+AvailableStates available_states;
+StateMachine state_machine(&available_states);
+DeviceManager device_manager;
+Timer main_timer;
 
 void setup()
 {
-  timer1.setup_timer();
+  main_timer.SetupTimer();
   device_manager.display.SetupDisplay();
   Serial.begin(115200);
 }
 
 void loop()
 {
-  timer1.wait_for_timer();
+  main_timer.WaitForTimer();
 
-  state_machine.run();
+  state_machine.Run();
 
   device_manager.display.DisplayState(
       device_manager.display.kStateLabel.idle);
