@@ -1,20 +1,33 @@
 #pragma once
 
-#include <Arduino.h>
-
-enum Dosing
+// both times are defined in seconds
+struct DosingTimes
 {
-    level_1,
-    level_2
+    float rotation_time_s;
+    float waiting_time_s;
 };
 
-namespace drivers
+struct AvailableDosingModes
 {
-    class PelletSpiral
-    {
-        Dosing dosing = level_1;
+    DosingTimes start_up = {110, 170};
+    DosingTimes mode_1 = {2.9, 1.1};
+    DosingTimes mode_2 = {2.5, 1.5};
+    DosingTimes mode_3 = {2.1, 1.9};
+    DosingTimes mode_4 = {1.8, 2.2};
+    DosingTimes mode_5 = {1.5, 2.5};
+    DosingTimes cleaning = {2.9, 1.1};
+};
 
-    public:
-        void rotate_spiral();
-    };
-}
+class PelletSpiral
+{
+    DosingTimes dosing_mode;
+
+public:
+    const AvailableDosingModes kAvailableDosingModes;
+
+    PelletSpiral();
+    void SetDosingMode(DosingTimes dosing);
+    float GetRotationTime();
+    float GetWaitingTime();
+    void Rotate();
+};
