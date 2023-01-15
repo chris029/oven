@@ -8,30 +8,30 @@ class StateMachine;
 class Idle : public State
 {
 public:
-    void enter(StateMachine *sm) {}
-    void execute(StateMachine *sm);
-    void exit(StateMachine *sm);
+    void Enter(StateMachine *sm) {}
+    void Execute(StateMachine *sm);
+    void Exit(StateMachine *sm);
 };
 
 class StartUp : public State
 {
 public:
-    void enter(StateMachine *sm) {}
-    void execute(StateMachine *sm);
-    void exit(StateMachine *sm);
+    void Enter(StateMachine *sm) {}
+    void Execute(StateMachine *sm);
+    void Exit(StateMachine *sm);
 };
 
 class ProgramOne : public State
 {
 public:
-    void enter(StateMachine *sm) {}
-    void execute(StateMachine *sm);
-    void exit(StateMachine *sm);
+    void Enter(StateMachine *sm) {}
+    void Execute(StateMachine *sm);
+    void Exit(StateMachine *sm);
 };
 
 struct AvailableStates
 {
     Idle idle;
-    StartUp startUp;
-    ProgramOne programOne;
+    StartUp start_up;
+    ProgramOne program_1;
 };

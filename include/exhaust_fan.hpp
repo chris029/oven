@@ -1,14 +1,12 @@
 #pragma once
 
-#include <Arduino.h>
-
-namespace drivers
+class ExhaustFan
 {
-    class ExhaustFan
-    {
-        int rpm = 1691;
+    int rpm = 0;
 
-    public:
-        void apply_rpm(int);
-    };
-}
+public:
+    void SetRPM(int rotation_speed);
+    int GetRPM();
+    void Start();
+    void Stop();
+};

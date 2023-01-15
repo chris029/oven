@@ -13,7 +13,7 @@ ISR(TIMER1_COMPA_vect)
     timerCnt++;
 }
 
-void timer::Timer::setup_timer()
+void Timer::SetupTimer()
 {
     TCCR1A = 0; // set entire TCCR1A register to 0
     TCCR1B = 0; // same for TCCR1B
@@ -27,12 +27,12 @@ void timer::Timer::setup_timer()
     TIMSK1 |= (1 << OCIE1A);
 }
 
-int timer::Timer::get_counter_val()
+int Timer::GetCurrentVal()
 {
     return timerCnt;
 }
 
-void timer::Timer::wait_for_timer()
+void Timer::WaitForTimer()
 {
     if (timerCnt > EXECUTION_WINDOW)
     {

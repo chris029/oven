@@ -2,17 +2,21 @@
 
 #include "state_interface.hpp"
 #include "states.hpp"
+#include "device_manager.hpp"
 
 class State;
 struct AvailableStates;
 
 class StateMachine
 {
-public:
-    State *currentState;
-    AvailableStates *avStates;
+    State *current_state;
 
-    StateMachine(AvailableStates *avStates);
-    void run();
-    void setState(State &newState);
+public:
+    AvailableStates *available_states;
+    DeviceManager device_manager;
+
+    StateMachine(AvailableStates *av_states);
+    void SetupStateMachine();
+    void Run();
+    void SetState(State &new_state);
 };

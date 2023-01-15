@@ -2,21 +2,26 @@
 
 #include "operators.hpp"
 
-StateMachine::StateMachine(AvailableStates *availableStates)
+StateMachine::StateMachine(AvailableStates *avStates)
 {
-    avStates = availableStates;
-    currentState = &avStates->idle;
+    available_states = avStates;
+    current_state = &available_states->idle;
 }
 
-void StateMachine::setState(State &newState)
+void StateMachine::SetupStateMachine()
 {
-    currentState->exit(this);
-    currentState = &newState;
-    currentState->enter(this);
+    StateMachine::device_manager.display.SetupDisplay();
 }
 
-void StateMachine::run()
+void StateMachine::SetState(State &newState)
+{
+    current_state->Exit(this);
+    current_state = &newState;
+    current_state->Enter(this);
+}
+
+void StateMachine::Run()
 {
     // Delegate the task of determining the next state to the current state!
-    currentState->execute(this);
+    current_state->Execute(this);
 }

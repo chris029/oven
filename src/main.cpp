@@ -1,29 +1,21 @@
 #include <Arduino.h>
 
-#include "operators.hpp"
-
 #include "timer.hpp"
-#include "device_manager.hpp"
 #include "state_machine.hpp"
 
-AvailableStates availableStates;
-StateMachine state_machine(&availableStates);
-drivers::DeviceManager device_manager;
-timer::Timer timer1;
+AvailableStates available_states;
+StateMachine state_machine(&available_states);
+Timer main_timer;
 
 void setup()
 {
-  pinMode(13, OUTPUT);
-  timer1.setup_timer();
   Serial.begin(115200);
+  main_timer.SetupTimer();
+  state_machine.SetupStateMachine();
 }
 
 void loop()
 {
-  timer1.wait_for_timer();
-
-  state_machine.run();
-  device_manager.display.display_text();
-  device_manager.exhaust_fan.apply_rpm(2692);
-  device_manager.pellet_spiral.rotate_spiral();
+  main_timer.WaitForTimer();
+  state_machine.Run();
 }

@@ -3,14 +3,13 @@
 #include "display.hpp"
 #include "exhaust_fan.hpp"
 #include "pellet_spiral.hpp"
+#include "cartridge_heater.hpp"
 
-namespace drivers
+class DeviceManager
 {
-    class DeviceManager
-    {
-    public:
-        Display display;
-        ExhaustFan exhaust_fan;
-        PelletSpiral pellet_spiral;
-    };
-}
+public:
+    Display display;
+    ExhaustFan exhaust_fan;
+    PelletSpiral pellet_spiral;
+    CartridgeHeater cartridge_heater;
+};

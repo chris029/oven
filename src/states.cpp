@@ -2,36 +2,41 @@
 
 #include "operators.hpp"
 
-void Idle::execute(StateMachine *sm)
+void Idle::Execute(StateMachine *sm)
 {
     // while (true) that waits for a button hold
     Serial << "State Idle is running...\n";
-    sm->setState(sm->avStates->startUp);
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
+    sm->SetState(sm->available_states->start_up);
 }
 
-void Idle::exit(StateMachine *sm)
+void Idle::Exit(StateMachine *sm)
 {
     Serial << "State Idle exits.\n";
 }
 
-void StartUp::execute(StateMachine *sm)
+void StartUp::Execute(StateMachine *sm)
 {
     Serial << "State StartUp is running...\n";
-    sm->setState(sm->avStates->programOne);
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
+    sm->device_manager.cartridge_heater.Start();
+    sm->SetState(sm->available_states->program_1);
 }
 
-void StartUp::exit(StateMachine *sm)
+void StartUp::Exit(StateMachine *sm)
 {
     Serial << "State StartUp exits.\n";
 }
 
-void ProgramOne::execute(StateMachine *sm)
+void ProgramOne::Execute(StateMachine *sm)
 {
     Serial << "State ProgramOne is running...\n";
-    sm->setState(sm->avStates->idle);
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
+    sm->device_manager.cartridge_heater.Stop();
+    sm->SetState(sm->available_states->idle);
 }
 
-void ProgramOne::exit(StateMachine *sm)
+void ProgramOne::Exit(StateMachine *sm)
 {
     Serial << "State ProgramOne exits.\n";
 }
