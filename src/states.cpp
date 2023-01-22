@@ -6,7 +6,9 @@ void Idle::Execute(StateMachine *sm)
 {
     // while (true) that waits for a button hold
     Serial << "State Idle is running...\n";
+    Serial << "Current timer value: " << sm->timer << "s\n";
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
+    sm->device_manager.exhaust_fan.Start();
     sm->SetState(sm->available_states->start_up);
 }
 
@@ -20,6 +22,7 @@ void StartUp::Execute(StateMachine *sm)
     Serial << "State StartUp is running...\n";
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
     sm->device_manager.cartridge_heater.Start();
+    sm->device_manager.exhaust_fan.SetRPM(800);
     sm->SetState(sm->available_states->program_1);
 }
 

@@ -1,5 +1,3 @@
-#include "Arduino.h"
-
 #include "display.hpp"
 #include "exhaust_fan.hpp"
 #include "pellet_spiral.hpp"
@@ -12,4 +10,6 @@ public:
     ExhaustFan exhaust_fan;
     PelletSpiral pellet_spiral;
     CartridgeHeater cartridge_heater;
+
+    void SetupDevices();
 };
