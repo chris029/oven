@@ -12,4 +12,6 @@ public:
     ExhaustFan exhaust_fan;
     PelletSpiral pellet_spiral;
     CartridgeHeater cartridge_heater;
+
+    void SetupDevices();
 };

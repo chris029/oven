@@ -10,7 +10,7 @@ StateMachine::StateMachine(AvailableStates *avStates)
 
 void StateMachine::SetupStateMachine()
 {
-    StateMachine::device_manager.display.SetupDisplay();
+    StateMachine::device_manager.SetupDevices();
 }
 
 void StateMachine::SetState(State &newState)
