@@ -19,6 +19,7 @@ class StateMachine
     State *current_state;
 
 public:
+    uint32_t timer;
     Events events;
     AvailableStates *available_states;
     DeviceManager device_manager;
