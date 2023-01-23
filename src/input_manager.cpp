@@ -25,36 +25,39 @@ void InputManager::CheckInputs()
 
 void InputManager::CheckButton()
 {
-    Serial << "Button: checking button...\n";
+    // Serial << F("Button: checking button...\n");
 
-    // if (digitalRead(BUTTON_PIN) == LOW)
-    // {
-    //     this->button_pressed = true;
-    //     this->button_timer++;
-    //     Serial << "Button: button pressed\n";
-    //     Serial << "Button: held for " << this->button_timer << "00 ms\n";
-    // }
-    // else
-    // {
-    //     Serial << "Button: button released\n";
-    //     this->button_pressed = false;
-    //     this->sm->events.short_button_pressed = false;
-    //     this->sm->events.long_button_pressed = false;
-    // }
+    if (digitalRead(BUTTON_PIN) == LOW)
+    {
+        this->button_pressed = true;
+    }
+    else
+    {
+        this->button_pressed = false;
+        this->button_released = true;
+    }
 
-    // if (this->button_pressed)
-    // {
-    //     // 30 * 100 ms (main timer) = 3 s
-    //     if (this->button_timer < 30)
-    //     {
-    //         this->sm->events.short_button_pressed = true;
-    //     }
-    //     else
-    //     {
-    //         this->sm->events.long_button_pressed = true;
-    //     }
-    //     this->button_timer = 0;
-    // }
+    if (this->button_pressed && this->button_released)
+    {
+        this->button_timer++;
+        // Serial << F("Button: held for ") << this->button_timer << F("00 ms\n");
+        if (this->button_timer >= 30)
+        {
+            // 30 * 100 ms (main timer) = 3 s
+            this->sm->events.long_button_pressed = true;
+            // Serial << F("Event: long press\n");
+            this->button_timer = 0;
+            this->button_released = false;
+        }
+    }
+
+    if (!this->button_pressed && this->button_timer > 0)
+    {
+        this->sm->events.short_button_pressed = true;
+        // Serial << F("Event: short press\n");
+        this->button_pressed = false;
+        this->button_timer = 0;
+    }
 }
 
 void InputManager::CheckTemperatureRelay()

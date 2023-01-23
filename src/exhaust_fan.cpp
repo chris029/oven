@@ -25,8 +25,8 @@ void ExhaustFan::Start()
 {
     // TODO: triac board handling
     int power = fan_driver.getPower();
-    Serial << "Fan rotates at RPM: " << rpm << "\n";
-    Serial << "Fan driver outputs: " << power << "\n";
+    // Serial << "Fan rotates at RPM: " << rpm << "\n";
+    // Serial << "Fan driver outputs: " << power << "\n";
 }
 
 void ExhaustFan::Stop()

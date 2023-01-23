@@ -27,10 +27,10 @@ float PelletSpiral::GetWaitingTime()
 
 void PelletSpiral::Rotate()
 {
-    Serial
-        << "Pellet spiral spins for: "
-        << PelletSpiral::dosing_mode.rotation_time_s
-        << "\n";
+    // Serial
+    //     << "Pellet spiral spins for: "
+    //     << PelletSpiral::dosing_mode.rotation_time_s
+    //     << "\n";
 
     // TODO:
     // how to handle time measurement inside a state machine
