@@ -4,55 +4,123 @@
 
 void Idle::Execute(StateMachine *sm)
 {
-    // while (true) that waits for a button hold
-    // Serial << F("State Idle is running...\n");
-    // Serial << F("Current timer value: ") << sm->timer << F("s\n");
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
-    sm->device_manager.exhaust_fan.Start();
-    sm->SetState(sm->available_states->start_up);
+    if (sm->events.long_button_pressed)
+    {
+        sm->SetState(sm->available_states->start_up);
+    }
 }
 
 void Idle::Exit(StateMachine *sm)
 {
-    // Serial << "State Idle exits.\n";
+    sm->ClearAllEvents();
+    sm->ClearTimer();
+}
+
+StartUp::StartUp()
+{
+    this->sub_state = SubState::INITIAL_FILL_UP;
 }
 
 void StartUp::Execute(StateMachine *sm)
 {
     // Serial << "State StartUp is running...\n";
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
-    sm->device_manager.cartridge_heater.Start();
-    sm->device_manager.exhaust_fan.SetRPM(800);
-    sm->SetState(sm->available_states->program_1);
+
+    switch (this->sub_state)
+    {
+    case SubState::INITIAL_FILL_UP:
+        sm->device_manager.pellet_spiral.Start();
+        if (sm->timer_ms > 11000)
+        {
+            // Serial << F("INITIAL_FILL_UP\n");
+            sm->device_manager.pellet_spiral.Stop();
+            sm->ClearTimer();
+            sub_state = SubState::INITIAL_STALLING;
+        }
+        break;
+    case SubState::INITIAL_STALLING:
+        if (sm->timer_ms > 17000)
+        {
+            // Serial << F("INITIAL_STALLING\n");
+            sm->device_manager.cartridge_heater.Start();
+            sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1610);
+            sm->ClearTimer();
+            sub_state = SubState::FILL_UP;
+        }
+        break;
+    case SubState::FILL_UP:
+        sm->device_manager.pellet_spiral.Start();
+        if (sm->timer_ms > 1100)
+        {
+            // Serial << F("FILL_UP\n");
+            sm->device_manager.pellet_spiral.Stop();
+            sm->ClearTimer();
+            sub_state = SubState::STALLING;
+        }
+        break;
+    case SubState::STALLING:
+        if (sm->timer_ms > 2900)
+        {
+            // Serial << F("STALLING\n");
+            sm->ClearTimer();
+            sub_state = SubState::FILL_UP;
+        }
+        break;
+    }
+
+    // if heat_up_done (timer cnt instead) -> set new state: program_1
+
+    if (sm->events.short_button_pressed)
+    {
+        sm->SetState(sm->available_states->program_1);
+    }
 }
 
 void StartUp::Exit(StateMachine *sm)
 {
-    // Serial << "State StartUp exits.\n";
+    sm->ClearAllEvents();
+    sm->ClearTimer();
 }
 
 void ProgramOne::Execute(StateMachine *sm)
 {
-    // Serial << "State Program_1 is running...\n";
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
-    sm->device_manager.cartridge_heater.Stop();
-    sm->SetState(sm->available_states->program_2);
+
+    if (sm->events.short_button_pressed)
+    {
+        sm->SetState(sm->available_states->program_2);
+    }
 }
 
 void ProgramOne::Exit(StateMachine *sm)
 {
-    // Serial << "State Program_1 exits.\n";
+    sm->ClearAllEvents();
+    sm->ClearTimer();
 }
 
 void ProgramTwo::Execute(StateMachine *sm)
 {
-    // Serial << "State Program_2 is running...\n";
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
-    sm->device_manager.cartridge_heater.Stop();
-    sm->SetState(sm->available_states->idle);
+
+    if (sm->events.short_button_pressed)
+    {
+        sm->SetState(sm->available_states->idle);
+    }
 }
 
 void ProgramTwo::Exit(StateMachine *sm)
 {
-    // Serial << "State Program2 exits.\n";
+    sm->ClearAllEvents();
+    sm->ClearTimer();
 }
+
+// Just in case - reading serial input to set triac output voltage manually
+// if (Serial.available())
+// {
+//     byte m = Serial.readBytesUntil('\n', myData, 2);
+//     myData[m] = '\0';     // insert null charcater
+//     int x = atoi(myData); // converts string to int
+//     Serial << F("Power: ") << x << F("\n");
+//     sm->device_manager.exhaust_fan.SetRPM(x);
+// }

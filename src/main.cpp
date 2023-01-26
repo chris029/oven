@@ -26,7 +26,7 @@ void loop()
   input_manager.CheckInputs();
   state_machine.Run();
 
-  Serial << F("[memCheck] : ") << FreeRAM() << F("\n");
+  // Serial << F("[memCheck] : ") << FreeRAM() << F("\n");
 }
 
 int FreeRAM()

@@ -7,34 +7,17 @@
 
 PelletSpiral::PelletSpiral()
 {
-    // pinMode(PELLET_SPIRAL_RELAY, OUTPUT);
+    pinMode(PELLET_SPIRAL_RELAY, OUTPUT);
+    // HIGH turns off a relay
+    digitalWrite(PELLET_SPIRAL_RELAY, HIGH);
 }
 
-void PelletSpiral::SetDosingMode(DosingTimes dosing)
+void PelletSpiral::Start()
 {
-    PelletSpiral::dosing_mode = dosing;
+    digitalWrite(PELLET_SPIRAL_RELAY, LOW);
 }
 
-float PelletSpiral::GetRotationTime()
+void PelletSpiral::Stop()
 {
-    return PelletSpiral::dosing_mode.rotation_time_s;
-}
-
-float PelletSpiral::GetWaitingTime()
-{
-    return PelletSpiral::dosing_mode.waiting_time_s;
-}
-
-void PelletSpiral::Rotate()
-{
-    // Serial
-    //     << "Pellet spiral spins for: "
-    //     << PelletSpiral::dosing_mode.rotation_time_s
-    //     << "\n";
-
-    // TODO:
-    // how to handle time measurement inside a state machine
-
-    // usage: turn on/off relays (GPIO) for defined amount of time
-    // e.g. digitalWrite(PELLET_SPIRAL_RELAY, LOW);
+    digitalWrite(PELLET_SPIRAL_RELAY, HIGH);
 }

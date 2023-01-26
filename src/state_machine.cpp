@@ -23,7 +23,19 @@ void StateMachine::SetState(State &newState)
 void StateMachine::Run()
 {
     // increment timer based on main timer - default: 100ms
-    this->timer++;
-    // Delegate the task of determining the next state to the current state!
+    this->timer_ms += 100;
+    // Delegate the task of determining the next state to the current state
     current_state->Execute(this);
+}
+
+void StateMachine::ClearAllEvents()
+{
+    this->events.heating_up_done = false;
+    this->events.long_button_pressed = false;
+    this->events.short_button_pressed = false;
+}
+
+void StateMachine::ClearTimer()
+{
+    this->timer_ms = 0;
 }

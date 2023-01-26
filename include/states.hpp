@@ -7,6 +7,7 @@ class StateMachine;
 
 class Idle : public State
 {
+
 public:
     void Enter(StateMachine *sm) {}
     void Execute(StateMachine *sm);
@@ -15,7 +16,16 @@ public:
 
 class StartUp : public State
 {
+    enum class SubState
+    {
+        INITIAL_FILL_UP,
+        INITIAL_STALLING,
+        FILL_UP,
+        STALLING
+    } sub_state;
+
 public:
+    StartUp();
     void Enter(StateMachine *sm) {}
     void Execute(StateMachine *sm);
     void Exit(StateMachine *sm);

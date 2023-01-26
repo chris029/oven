@@ -39,7 +39,7 @@ void Timer::WaitForTimer()
         Serial << "=== ERROR: code execution longer than " << EXECUTION_WINDOW << "ms ===\n";
     }
 
-    while (timerCnt < 1000)
+    while (timerCnt < 100)
     {
         // wait 1000ms
     }
