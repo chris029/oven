@@ -2,6 +2,15 @@
 
 #include "operators.hpp"
 
+
+// =============== Idle ===============================
+
+void Idle::Enter(StateMachine *sm)
+{
+    sm->ClearAllEvents();
+    sm->ClearTimer();
+}
+
 void Idle::Execute(StateMachine *sm)
 {
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
@@ -11,15 +20,18 @@ void Idle::Execute(StateMachine *sm)
     }
 }
 
-void Idle::Exit(StateMachine *sm)
-{
-    sm->ClearAllEvents();
-    sm->ClearTimer();
-}
+
+// =============== Start up ===============================
 
 StartUp::StartUp()
 {
     this->sub_state = SubState::INITIAL_FILL_UP;
+}
+
+void StartUp::Enter(StateMachine *sm)
+{
+    sm->ClearAllEvents();
+    sm->ClearTimer();
 }
 
 void StartUp::Execute(StateMachine *sm)
@@ -75,9 +87,17 @@ void StartUp::Execute(StateMachine *sm)
     {
         sm->SetState(sm->available_states->program_1);
     }
+    
+    if (sm->events.long_button_pressed)
+    {
+        sm->SetState(sm->available_states->turn_off)
+    }
 }
 
-void StartUp::Exit(StateMachine *sm)
+
+// =============== Program 1 ===============================
+
+void ProgramOne::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
@@ -91,9 +111,17 @@ void ProgramOne::Execute(StateMachine *sm)
     {
         sm->SetState(sm->available_states->program_2);
     }
+
+    if (sm->events.long_button_pressed)
+    {
+        sm->SetState(sm->available_states->turn_off)
+    }
 }
 
-void ProgramOne::Exit(StateMachine *sm)
+
+// =============== Program 2 ===============================
+
+void ProgramTwo::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
@@ -107,12 +135,54 @@ void ProgramTwo::Execute(StateMachine *sm)
     {
         sm->SetState(sm->available_states->idle);
     }
+
+    if (sm->events.long_button_pressed)
+    {
+        sm->SetState(sm->available_states->turn_off)
+    }
 }
 
-void ProgramTwo::Exit(StateMachine *sm)
+
+// =============== Turn off ===============================
+
+void TurnOff::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
+}
+
+void TurnOff::Execute(StateMachine *sm)
+{
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+
+    if (sm->events.short_button_pressed)
+    {
+        sm->SetState(sm->available_states->idle);
+    }
+}
+
+
+// =============== Clean up ===============================
+
+void Cleaning::Enter(StateMachine *sm)
+{
+    sm->ClearAllEvents();
+    sm->ClearTimer();
+}
+
+void Cleaning::Execute(StateMachine *sm)
+{
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+
+    if (sm->events.short_button_pressed)
+    {
+        sm->SetState(sm->available_states->idle);
+    }
+
+    if (sm->events.long_button_pressed)
+    {
+        sm->SetState(sm->available_states->turn_off)
+    }
 }
 
 // Just in case - reading serial input to set triac output voltage manually
