@@ -2,14 +2,13 @@
 
 #include "operators.hpp"
 
-
 // =============== Idle ===============================
 
 void Idle::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
 }
 
 void Idle::Execute(StateMachine *sm)
@@ -19,7 +18,6 @@ void Idle::Execute(StateMachine *sm)
         sm->SetNextState(sm->available_states->start_up);
     }
 }
-
 
 // =============== Start up ===============================
 
@@ -32,7 +30,7 @@ void StartUp::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
 }
 
 void StartUp::Execute(StateMachine *sm)
@@ -88,7 +86,12 @@ void StartUp::Execute(StateMachine *sm)
     {
         sm->SetNextState(sm->available_states->program_1);
     }
-    
+
+    if (sm->events.short_button_pressed)
+    {
+        sm->SetNextState(sm->available_states->program_1);
+    }
+
     if (sm->events.long_button_pressed)
     {
         sm->SetNextState(sm->available_states->turn_off);
@@ -101,7 +104,6 @@ void StartUp::Exit(StateMachine *sm)
     sm->SetPreviousState(sm->available_states->start_up);
 }
 
-
 // =============== Program 1 ===============================
 ProgramOne::ProgramOne()
 {
@@ -112,7 +114,7 @@ void ProgramOne::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1360);
 }
 
@@ -164,7 +166,6 @@ void ProgramOne::Exit(StateMachine *sm)
     sm->SetPreviousState(sm->available_states->program_1);
 }
 
-
 // =============== Program 2 ===============================
 ProgramTwo::ProgramTwo()
 {
@@ -175,7 +176,7 @@ void ProgramTwo::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1470);
 }
 
@@ -227,14 +228,13 @@ void ProgramTwo::Exit(StateMachine *sm)
     sm->SetPreviousState(sm->available_states->program_2);
 }
 
-
 // =============== Turn off ===============================
 
 void TurnOff::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.turn_off);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.turn_off);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
     sm->device_manager.pellet_spiral.Stop();
 }
@@ -255,7 +255,6 @@ void TurnOff::Exit(StateMachine *sm)
     sm->SetPreviousState(sm->available_states->turn_off);
 }
 
-
 // =============== Clean up ===============================
 
 Cleaning::Cleaning()
@@ -267,7 +266,7 @@ void Cleaning::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
 }
 
@@ -296,7 +295,7 @@ void Cleaning::Execute(StateMachine *sm)
         }
         break;
     }
-    
+
     if (this->state_timer_ms >= 20000)
     {
         sm->SetNextState(*sm->GetPreviousState());
@@ -308,9 +307,6 @@ void Cleaning::Exit(StateMachine *sm)
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->cleaning);
 }
-
-
-
 
 // Just in case - reading serial input to set triac output voltage manually
 // if (Serial.available())

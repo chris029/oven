@@ -42,6 +42,7 @@ void InputManager::CheckButton()
         this->button_timer++;
         if (this->button_timer >= LONG_BUTTON_PRESS_CNT)
         {
+            Serial << F("long button press\n");
             // 30 * 100 ms (main timer) = 3 s
             this->sm->events.long_button_pressed = true;
             this->button_timer = 0;
@@ -51,6 +52,7 @@ void InputManager::CheckButton()
 
     if (!this->button_pressed && this->button_timer > 0)
     {
+        Serial << F("short button press\n");
         this->sm->events.short_button_pressed = true;
         this->button_pressed = false;
         this->button_timer = 0;
