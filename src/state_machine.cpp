@@ -25,7 +25,7 @@ void StateMachine::SetPreviousState(State &newState)
     current_state = &newState;
 }
 
-State* StateMachine::GetPreviousState()
+State *StateMachine::GetPreviousState()
 {
     return previous_state;
 }
