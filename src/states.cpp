@@ -9,11 +9,11 @@ void Idle::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
 }
 
 void Idle::Execute(StateMachine *sm)
 {
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
     if (sm->events.long_button_pressed)
     {
         sm->SetState(sm->available_states->start_up);
@@ -32,13 +32,15 @@ void StartUp::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
 }
 
 void StartUp::Execute(StateMachine *sm)
 {
-    // Serial << "State StartUp is running...\n";
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
+    // increment timer based on main timer - default: 100ms
+    this->IncrementStateTimer();
 
+    // Serial << "State StartUp is running...\n";
     switch (this->sub_state)
     {
     case SubState::INITIAL_FILL_UP:
@@ -81,55 +83,132 @@ void StartUp::Execute(StateMachine *sm)
         break;
     }
 
-    // if heat_up_done (timer cnt instead) -> set new state: program_1
-
-    if (sm->events.short_button_pressed)
+    // timer will be replaced by temperature sensor event
+    if (this->state_timer_ms >= START_UP_TIME)
     {
-        sm->SetState(sm->available_states->program_1);
+        sm->SetNextState(sm->available_states->program_1);
     }
     
     if (sm->events.long_button_pressed)
     {
-        sm->SetState(sm->available_states->turn_off)
+        sm->SetNextState(sm->available_states->turn_off)
     }
+}
+
+void StartUp::Exit(StateMachine *sm)
+{
+    this->ClearStateTimer();
+    sm->SetPreviousState(sm->available_states->start_up);
 }
 
 
 // =============== Program 1 ===============================
+void ProgramOne::ProgramOne()
+{
+    this->sub_state = SubState::FILL_UP;
+}
 
 void ProgramOne::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
+    sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1360)
 }
 
 void ProgramOne::Execute(StateMachine *sm)
 {
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
+    this->IncrementStateTimer();
+
+    switch (this->sub_state)
+    {
+    case SubState::FILL_UP:
+        sm->device_manager.pellet_spiral.Start();
+        if (sm->timer_ms > 1100)
+        {
+            // Serial << F("FILL_UP\n");
+            sm->device_manager.pellet_spiral.Stop();
+            sm->ClearTimer();
+            sub_state = SubState::STALLING;
+        }
+        break;
+    case SubState::STALLING:
+        if (sm->timer_ms > 2900)
+        {
+            // Serial << F("STALLING\n");
+            sm->ClearTimer();
+            sub_state = SubState::FILL_UP;
+        }
+        break;
+    }
+
+    if (this->state_timer_ms >= TIME_FOR_CLEANING)
+    {
+        sm->SetNextState(sm->available_states->cleaning);
+    }
 
     if (sm->events.short_button_pressed)
     {
-        sm->SetState(sm->available_states->program_2);
+        sm->SetNextState(sm->available_states->program_2);
     }
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetState(sm->available_states->turn_off)
+        sm->SetNextState(sm->available_states->turn_off)
     }
+}
+
+void ProgramOne::Exit(StateMachine *sm)
+{
+    this->ClearStateTimer();
+    sm->SetPreviousState(sm->available_states->program_1);
 }
 
 
 // =============== Program 2 ===============================
+void ProgramTwo::ProgramTwo()
+{
+    this->sub_state = SubState::FILL_UP;
+}
 
 void ProgramTwo::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1470);
 }
 
 void ProgramTwo::Execute(StateMachine *sm)
 {
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    this->IncrementStateTimer();
+
+    switch (this->sub_state)
+    {
+    case SubState::FILL_UP:
+        sm->device_manager.pellet_spiral.Start();
+        if (sm->timer_ms > 1500)
+        {
+            // Serial << F("FILL_UP\n");
+            sm->device_manager.pellet_spiral.Stop();
+            sm->ClearTimer();
+            sub_state = SubState::STALLING;
+        }
+        break;
+    case SubState::STALLING:
+        if (sm->timer_ms > 2500)
+        {
+            // Serial << F("STALLING\n");
+            sm->ClearTimer();
+            sub_state = SubState::FILL_UP;
+        }
+        break;
+    }
+
+    if (this->state_timer_ms >= TIME_FOR_CLEANING)
+    {
+        sm->SetNextState(sm->available_states->cleaning);
+    }
 
     if (sm->events.short_button_pressed)
     {
@@ -138,10 +217,15 @@ void ProgramTwo::Execute(StateMachine *sm)
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetState(sm->available_states->turn_off)
+        sm->SetNextState(sm->available_states->turn_off)
     }
 }
 
+void ProgramTwo::Exit(StateMachine *sm)
+{
+    this->ClearStateTimer();
+    sm->SetPreviousState(sm->available_states->program_2);
+}
 
 // =============== Turn off ===============================
 
@@ -149,41 +233,82 @@ void TurnOff::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.turn_off);
+    sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
+    sm->device_manager.pellet_spiral.Stop()
 }
 
 void TurnOff::Execute(StateMachine *sm)
 {
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    this->IncrementStateTimer();
 
-    if (sm->events.short_button_pressed)
+    if (this->state_timer_ms >= 3000)
     {
-        sm->SetState(sm->available_states->idle);
+        sm->SetNextState(sm->available_states->idle);
     }
 }
 
+void TurnOff::Exit(StateMachine *sm)
+{
+    this->ClearStateTimer();
+    sm->SetPreviousState(sm->available_states->turn_off);
+}
 
 // =============== Clean up ===============================
+
+Cleaning::Cleaning()
+{
+    this->sub_state = SubState::FILL_UP;
+}
 
 void Cleaning::Enter(StateMachine *sm)
 {
     sm->ClearAllEvents();
     sm->ClearTimer();
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
 }
 
 void Cleaning::Execute(StateMachine *sm)
 {
-    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    this->IncrementStateTimer();
 
-    if (sm->events.short_button_pressed)
+    switch (this->sub_state)
     {
-        sm->SetState(sm->available_states->idle);
+    case SubState::FILL_UP:
+        sm->device_manager.pellet_spiral.Start();
+        if (sm->timer_ms > 1100)
+        {
+            // Serial << F("FILL_UP\n");
+            sm->device_manager.pellet_spiral.Stop();
+            sm->ClearTimer();
+            sub_state = SubState::STALLING;
+        }
+        break;
+    case SubState::STALLING:
+        if (sm->timer_ms > 2900)
+        {
+            // Serial << F("STALLING\n");
+            sm->ClearTimer();
+            sub_state = SubState::FILL_UP;
+        }
+        break;
     }
-
-    if (sm->events.long_button_pressed)
+    
+    if (this->state_timer_ms >= 20000)
     {
-        sm->SetState(sm->available_states->turn_off)
+        sm->SetNextState(sm->GetPreviousState())
     }
 }
+
+void Cleaning::Exit(StateMachine *sm)
+{
+    this->ClearStateTimer();
+    sm->SetPreviousState(sm->available_states->cleaning);
+}
+
+
+
 
 // Just in case - reading serial input to set triac output voltage manually
 // if (Serial.available())

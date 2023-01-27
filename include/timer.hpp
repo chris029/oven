@@ -1,5 +1,7 @@
 #pragma once
 
+#define EXECUTION_WINDOW 100 // ms
+
 class Timer
 {
 public:

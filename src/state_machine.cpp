@@ -13,11 +13,21 @@ void StateMachine::SetupStateMachine()
     StateMachine::device_manager.SetupDevices();
 }
 
-void StateMachine::SetState(State &newState)
+void StateMachine::SetNextState(State &newState)
 {
     current_state->Exit(this);
     current_state = &newState;
     current_state->Enter(this);
+}
+
+void StateMachine::SetPreviousState(State &newState)
+{
+    current_state = &newState;
+}
+
+State* StateMachine::GetPreviousState()
+{
+    return previous_state;
 }
 
 void StateMachine::Run()

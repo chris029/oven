@@ -17,6 +17,7 @@ struct Events
 class StateMachine
 {
     State *current_state;
+    State *previous_state;
 
 public:
     uint32_t timer_ms;
@@ -27,7 +28,9 @@ public:
     StateMachine(AvailableStates *av_states);
     void SetupStateMachine();
     void Run();
-    void SetState(State &new_state);
+    void SetNextState(State &new_state);
+    void SetPreviousState(State &new_state);
+    State * GetPreviousState();
     void ClearAllEvents();
     void ClearTimer();
 };
