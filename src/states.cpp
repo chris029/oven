@@ -16,7 +16,7 @@ void Idle::Execute(StateMachine *sm)
 {
     if (sm->events.long_button_pressed)
     {
-        sm->SetState(sm->available_states->start_up);
+        sm->SetNextState(sm->available_states->start_up);
     }
 }
 
@@ -91,7 +91,7 @@ void StartUp::Execute(StateMachine *sm)
     
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off)
+        sm->SetNextState(sm->available_states->turn_off);
     }
 }
 
@@ -103,7 +103,7 @@ void StartUp::Exit(StateMachine *sm)
 
 
 // =============== Program 1 ===============================
-void ProgramOne::ProgramOne()
+ProgramOne::ProgramOne()
 {
     this->sub_state = SubState::FILL_UP;
 }
@@ -113,7 +113,7 @@ void ProgramOne::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
-    sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1360)
+    sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1360);
 }
 
 void ProgramOne::Execute(StateMachine *sm)
@@ -154,7 +154,7 @@ void ProgramOne::Execute(StateMachine *sm)
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off)
+        sm->SetNextState(sm->available_states->turn_off);
     }
 }
 
@@ -166,7 +166,7 @@ void ProgramOne::Exit(StateMachine *sm)
 
 
 // =============== Program 2 ===============================
-void ProgramTwo::ProgramTwo()
+ProgramTwo::ProgramTwo()
 {
     this->sub_state = SubState::FILL_UP;
 }
@@ -212,12 +212,12 @@ void ProgramTwo::Execute(StateMachine *sm)
 
     if (sm->events.short_button_pressed)
     {
-        sm->SetState(sm->available_states->idle);
+        sm->SetNextState(sm->available_states->idle);
     }
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off)
+        sm->SetNextState(sm->available_states->turn_off);
     }
 }
 
@@ -227,6 +227,7 @@ void ProgramTwo::Exit(StateMachine *sm)
     sm->SetPreviousState(sm->available_states->program_2);
 }
 
+
 // =============== Turn off ===============================
 
 void TurnOff::Enter(StateMachine *sm)
@@ -235,7 +236,7 @@ void TurnOff::Enter(StateMachine *sm)
     sm->ClearTimer();
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.turn_off);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
-    sm->device_manager.pellet_spiral.Stop()
+    sm->device_manager.pellet_spiral.Stop();
 }
 
 void TurnOff::Execute(StateMachine *sm)
@@ -253,6 +254,7 @@ void TurnOff::Exit(StateMachine *sm)
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->turn_off);
 }
+
 
 // =============== Clean up ===============================
 
@@ -297,7 +299,7 @@ void Cleaning::Execute(StateMachine *sm)
     
     if (this->state_timer_ms >= 20000)
     {
-        sm->SetNextState(sm->GetPreviousState())
+        sm->SetNextState(*sm->GetPreviousState());
     }
 }
 
