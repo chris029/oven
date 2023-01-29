@@ -6,13 +6,12 @@
 
 void Idle::Enter(StateMachine *sm)
 {
-    sm->ClearAllEvents();
-    sm->ClearTimer();
     // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
 }
 
 void Idle::Execute(StateMachine *sm)
 {
+    // Serial << F("IDLE execute\n");
     if (sm->events.long_button_pressed)
     {
         sm->SetNextState(sm->available_states->start_up);
@@ -28,6 +27,7 @@ StartUp::StartUp()
 
 void StartUp::Enter(StateMachine *sm)
 {
+    // Serial << F("STARTUP enter\n");
     sm->ClearAllEvents();
     sm->ClearTimer();
     // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
@@ -43,20 +43,20 @@ void StartUp::Execute(StateMachine *sm)
     {
     case SubState::INITIAL_FILL_UP:
         sm->device_manager.pellet_spiral.Start();
-        if (sm->timer_ms > 11000)
+        sm->device_manager.cartridge_heater.Start();
+        sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1610);
+        if (sm->timer_ms > 110000)
         {
-            // Serial << F("INITIAL_FILL_UP\n");
+            Serial << F("INITIAL_FILL_UP\n");
             sm->device_manager.pellet_spiral.Stop();
             sm->ClearTimer();
             sub_state = SubState::INITIAL_STALLING;
         }
         break;
     case SubState::INITIAL_STALLING:
-        if (sm->timer_ms > 17000)
+        if (sm->timer_ms > 170000)
         {
-            // Serial << F("INITIAL_STALLING\n");
-            sm->device_manager.cartridge_heater.Start();
-            sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1610);
+            Serial << F("INITIAL_STALLING\n");
             sm->ClearTimer();
             sub_state = SubState::FILL_UP;
         }
@@ -65,7 +65,7 @@ void StartUp::Execute(StateMachine *sm)
         sm->device_manager.pellet_spiral.Start();
         if (sm->timer_ms > 1100)
         {
-            // Serial << F("FILL_UP\n");
+            Serial << F("FILL_UP\n");
             sm->device_manager.pellet_spiral.Stop();
             sm->ClearTimer();
             sub_state = SubState::STALLING;
@@ -74,7 +74,7 @@ void StartUp::Execute(StateMachine *sm)
     case SubState::STALLING:
         if (sm->timer_ms > 2900)
         {
-            // Serial << F("STALLING\n");
+            Serial << F("STALLING\n");
             sm->ClearTimer();
             sub_state = SubState::FILL_UP;
         }
@@ -85,11 +85,13 @@ void StartUp::Execute(StateMachine *sm)
     if (this->state_timer_ms >= START_UP_TIME)
     {
         sm->SetNextState(sm->available_states->program_1);
+        sm->device_manager.cartridge_heater.Stop();
     }
 
     if (sm->events.short_button_pressed)
     {
         sm->SetNextState(sm->available_states->program_1);
+        sm->device_manager.cartridge_heater.Stop();
     }
 
     if (sm->events.long_button_pressed)
@@ -100,6 +102,7 @@ void StartUp::Execute(StateMachine *sm)
 
 void StartUp::Exit(StateMachine *sm)
 {
+    Serial << F("STARTUP exit\n");
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->start_up);
 }
@@ -112,6 +115,7 @@ ProgramOne::ProgramOne()
 
 void ProgramOne::Enter(StateMachine *sm)
 {
+    Serial << F("P1 enter\n");
     sm->ClearAllEvents();
     sm->ClearTimer();
     // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
@@ -120,6 +124,7 @@ void ProgramOne::Enter(StateMachine *sm)
 
 void ProgramOne::Execute(StateMachine *sm)
 {
+    // Serial << F("P1 execute\n");
     this->IncrementStateTimer();
 
     switch (this->sub_state)
@@ -162,6 +167,7 @@ void ProgramOne::Execute(StateMachine *sm)
 
 void ProgramOne::Exit(StateMachine *sm)
 {
+    Serial << F("P1 exit\n");
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->program_1);
 }
@@ -264,6 +270,7 @@ Cleaning::Cleaning()
 
 void Cleaning::Enter(StateMachine *sm)
 {
+    Serial << F("CLEANING enter\n");
     sm->ClearAllEvents();
     sm->ClearTimer();
     // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
@@ -296,7 +303,7 @@ void Cleaning::Execute(StateMachine *sm)
         break;
     }
 
-    if (this->state_timer_ms >= 20000)
+    if (this->state_timer_ms >= 20000) // 20 s
     {
         sm->SetNextState(*sm->GetPreviousState());
     }
@@ -304,6 +311,7 @@ void Cleaning::Execute(StateMachine *sm)
 
 void Cleaning::Exit(StateMachine *sm)
 {
+    Serial << F("CLEANING exit\n");
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->cleaning);
 }

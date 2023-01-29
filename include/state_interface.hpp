@@ -1,13 +1,14 @@
 #pragma once
 
 #include "state_machine.hpp"
+#include "Arduino.h"
 
 class StateMachine;
 
 class State
 {
 protected:
-    int state_timer_ms = 0;
+    uint32_t state_timer_ms = 0;
 
 public:
     virtual void Enter(StateMachine *program) = 0;

@@ -3,7 +3,7 @@
 #include "state_interface.hpp"
 #include "state_machine.hpp"
 
-#define START_UP_TIME 300000 // (5 * 60 * 1000) min * s * ms
+#define START_UP_TIME 300000      // (5 * 60 * 1000) min * s * ms
 #define TIME_FOR_CLEANING 1800000 // (30 * 60 * 1000) min * s * ms
 
 class StateMachine;
@@ -34,7 +34,7 @@ public:
 };
 
 class ProgramOne : public State
-{    
+{
     enum class SubState
     {
         FILL_UP,
@@ -78,7 +78,7 @@ class Cleaning : public State
         FILL_UP,
         STALLING
     } sub_state;
-    
+
 public:
     Cleaning();
     void Enter(StateMachine *sm);
