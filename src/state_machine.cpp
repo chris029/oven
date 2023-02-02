@@ -32,6 +32,12 @@ State *StateMachine::GetPreviousState()
 
 void StateMachine::Run()
 {
+    if (this->events.short_button_pressed)
+    {
+        this->device_manager.display.DisplayNextState();
+        this->events.short_button_pressed_cnt++;
+        this->events.short_button_pressed = false;
+    }
     // increment timer based on main timer - default: 100ms
     this->timer_ms += 100;
     // Delegate the task of determining the next state to the current state

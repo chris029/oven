@@ -19,7 +19,10 @@ class Display
 {
 public:
     const StateLabels kStateLabel;
+    const String *pStateLabels = &kStateLabel.program_1;
+    uint8_t label_switch_cnt = 0;
 
     void SetupDisplay();
     void DisplayState(String label);
+    void DisplayNextState();
 };

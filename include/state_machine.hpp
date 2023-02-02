@@ -12,6 +12,7 @@ struct Events
     uint8_t short_button_pressed;
     uint8_t long_button_pressed;
     uint8_t heating_up_done;
+    uint8_t short_button_pressed_cnt = 0;
 };
 
 class StateMachine
@@ -30,7 +31,7 @@ public:
     void Run();
     void SetNextState(State &new_state);
     void SetPreviousState(State &new_state);
-    State * GetPreviousState();
+    State *GetPreviousState();
     void ClearAllEvents();
     void ClearTimer();
 };
