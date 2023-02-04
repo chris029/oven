@@ -1,12 +1,12 @@
-### Oven
+## Oven - arduino based driver
 
-## Dependencies (downloaded via platformIO):
+### Dependencies (downloaded via platformIO):
 * Adafruit SSD1306
 * Adafruit GFX Library
 * Adafruit BusIO
 * RBDDimmer
 
-## User action prior to compiling
+### User action prior to compiling
 
 It is necessary to modify RBDdimmer library to save up RAM.
 
