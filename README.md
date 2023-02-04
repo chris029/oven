@@ -1,10 +1,10 @@
 ### Oven
 
 ## Dependencies (downloaded via platformIO):
-*Adafruit SSD1306
-*Adafruit GFX Library
-*Adafruit BusIO
-*RBDDimmer
+* Adafruit SSD1306
+* Adafruit GFX Library
+* Adafruit BusIO
+* RBDDimmer
 
 ## User action prior to compiling
 
