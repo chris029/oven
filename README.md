@@ -1,5 +1,11 @@
 ### Oven
 
+## Dependencies (downloaded via platformIO):
+*Adafruit SSD1306
+*Adafruit GFX Library
+*Adafruit BusIO
+*RBDDimmer
+
 ## User action prior to compiling
 
 It is necessary to modify RBDdimmer library to save up RAM.
