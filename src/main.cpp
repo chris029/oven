@@ -3,6 +3,7 @@
 #include "timer.hpp"
 #include "state_machine.hpp"
 #include "input_manager.hpp"
+#include "operators.hpp"
 
 AvailableStates available_states;
 StateMachine state_machine(&available_states);

@@ -43,3 +43,29 @@ void Display::DisplayState(String label)
     display.print(label);
     display.display();
 }
+
+void Display::DisplayNextState()
+{
+    display.clearDisplay();
+
+    // Normal 1:1 pixel scale
+    display.setTextSize(1);
+    // Start at top-left corner
+    display.setCursor(0, 0);
+    display.println(F("State:\n"));
+    // Draw 2X-scale text
+    display.setTextSize(2);
+    display.print(*this->pStateLabels);
+    display.display();
+
+    if (this->label_switch_cnt < 4)
+    {
+        this->pStateLabels++;
+        this->label_switch_cnt++;
+    }
+    else
+    {
+        this->pStateLabels = &kStateLabel.program_1;
+        this->label_switch_cnt = 0;
+    }
+}

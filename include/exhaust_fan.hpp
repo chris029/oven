@@ -7,14 +7,27 @@
 #define ZC_PIN 2
 #define MAXVALUE 100
 
+// these value were measured with an RPM meter
+// when playing with a triac module
+enum class RPMValues
+{
+    RPM_2660,
+    RPM_1850,
+    RPM_1690,
+    RPM_1610,
+    RPM_1470,
+    RPM_1360,
+    RPM_IDLE
+};
+
 class ExhaustFan
 {
     dimmerLamp fan_driver{PSM_PIN};
-    int rpm = 0;
+    int real_RPM;
 
 public:
     void SetupFanDriver();
-    void SetRPM(int rotation_speed);
+    void SetRPM(RPMValues rotation_speed);
     int GetRPM();
     void Start();
     void Stop();

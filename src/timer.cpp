@@ -4,8 +4,6 @@
 #include "operators.hpp"
 
 // ISR is set for 1kHz -> timerCnt increments every 1ms
-#define EXECUTION_WINDOW 100 // [ms]
-
 volatile int timerCnt = 0;
 
 ISR(TIMER1_COMPA_vect)
@@ -13,6 +11,7 @@ ISR(TIMER1_COMPA_vect)
     timerCnt++;
 }
 
+// ISR is set for 1kHz -> timerCnt increments every 1ms
 void Timer::SetupTimer()
 {
     TCCR1A = 0; // set entire TCCR1A register to 0
@@ -39,9 +38,8 @@ void Timer::WaitForTimer()
         Serial << "=== ERROR: code execution longer than " << EXECUTION_WINDOW << "ms ===\n";
     }
 
-    while (timerCnt < 1000)
+    while (timerCnt < EXECUTION_WINDOW) 
     {
-        // wait 1000ms
     }
 
     timerCnt = 0;
