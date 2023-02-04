@@ -6,6 +6,8 @@
 
 void Idle::Enter(StateMachine *sm)
 {
+    Serial << F("IDLE enter\n");
+    sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_IDLE);
 }
 
 void Idle::Execute(StateMachine *sm)
@@ -83,6 +85,7 @@ void StartUp::Execute(StateMachine *sm)
     if (this->state_timer_ms >= START_UP_TIME)
     {
         sm->SetNextState(sm->available_states->program_1);
+        sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
         sm->device_manager.cartridge_heater.Stop();
         sm->events.short_button_pressed_cnt--;
     }
@@ -456,7 +459,7 @@ void TurnOff::Execute(StateMachine *sm)
 {
     this->IncrementStateTimer();
 
-    if (this->state_timer_ms >= 3000)
+    if (this->state_timer_ms >= TURN_OFF_TIME)
     {
         sm->SetNextState(sm->available_states->idle);
     }
@@ -466,6 +469,8 @@ void TurnOff::Exit(StateMachine *sm)
 {
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->turn_off);
+    sm->device_manager.cartridge_heater.Stop();
+    sm->device_manager.pellet_spiral.Stop();
 }
 
 // =============== Clean up ===============================
@@ -512,7 +517,7 @@ void Cleaning::Execute(StateMachine *sm)
 
     if (this->state_timer_ms >= 20000) // 20 s
     {
-        sm->SetNextState(*sm->GetPreviousState());
+        sm->SetNextState(sm->available_states->program_1);
     }
 }
 

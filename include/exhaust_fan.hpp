@@ -16,7 +16,8 @@ enum class RPMValues
     RPM_1690,
     RPM_1610,
     RPM_1470,
-    RPM_1360
+    RPM_1360,
+    RPM_IDLE
 };
 
 class ExhaustFan

@@ -24,15 +24,23 @@ void ExhaustFan::SetRPM(RPMValues rotation_speed)
     case RPMValues::RPM_1690:
         ExhaustFan::real_RPM = 1690;
         ExhaustFan::fan_driver.setPower(38);
+        break;
     case RPMValues::RPM_1610:
         ExhaustFan::real_RPM = 1610;
         ExhaustFan::fan_driver.setPower(37);
+        break;
     case RPMValues::RPM_1470:
         ExhaustFan::real_RPM = 1470;
         ExhaustFan::fan_driver.setPower(36);
+        break;
     case RPMValues::RPM_1360:
         ExhaustFan::real_RPM = 1360;
         ExhaustFan::fan_driver.setPower(35);
+        break;
+    case RPMValues::RPM_IDLE:
+        ExhaustFan::real_RPM = 69;
+        ExhaustFan::fan_driver.setPower(5);
+        break;
     }
 }
 

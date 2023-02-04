@@ -11,5 +11,5 @@ static const PROGMEM uint16_t powerBuf[] = {
 
 Go to RBDmcuAVR.cpp and set line no. 105 to:
 ```c++
-dimPulseBegin[this->current_num] = pgm_read_byte(&(powerBuf[power]));
+dimPulseBegin[this->current_num] = pgm_read_word(&(powerBuf[power]));
 ```
