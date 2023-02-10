@@ -85,9 +85,6 @@ void StartUp::Execute(StateMachine *sm)
     if (this->state_timer_ms >= START_UP_TIME)
     {
         sm->SetNextState(sm->available_states->program_1);
-        sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
-        sm->device_manager.cartridge_heater.Stop();
-        sm->events.short_button_pressed_cnt--;
     }
 
     // if (sm->events.short_button_pressed)
@@ -107,6 +104,8 @@ void StartUp::Exit(StateMachine *sm)
     Serial << F("STARTUP exit\n");
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->start_up);
+    sm->device_manager.cartridge_heater.Stop();
+    sm->events.short_button_pressed_cnt--;
 }
 
 // =============== Program 1 ===============================
@@ -448,8 +447,12 @@ void ProgramFive::Exit(StateMachine *sm)
 
 void TurnOff::Enter(StateMachine *sm)
 {
+    Serial << F("TURN OFF enter\n");
     sm->ClearAllEvents();
     sm->ClearTimer();
+    sm->events.short_button_pressed_cnt = 0;
+    sm->device_manager.display.label_switch_cnt = 0;
+    sm->device_manager.display.pStateLabels = &sm->device_manager.display.kStateLabel.program_1;
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.turn_off);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
     sm->device_manager.pellet_spiral.Stop();
@@ -467,6 +470,7 @@ void TurnOff::Execute(StateMachine *sm)
 
 void TurnOff::Exit(StateMachine *sm)
 {
+    Serial << F("TURN OFF exit\n");
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->turn_off);
     sm->device_manager.cartridge_heater.Stop();
@@ -485,7 +489,9 @@ void Cleaning::Enter(StateMachine *sm)
     Serial << F("CLEANING enter\n");
     sm->ClearAllEvents();
     sm->ClearTimer();
-    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.cleaning);
+    sm->device_manager.display.label_switch_cnt = 0;
+    sm->device_manager.display.pStateLabels = &sm->device_manager.display.kStateLabel.program_1;
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.cleaning);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
 }
 
@@ -526,6 +532,7 @@ void Cleaning::Exit(StateMachine *sm)
     Serial << F("CLEANING exit\n");
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->cleaning);
+    sm->device_manager.display.DisplayNextState();
 }
 
 // Just in case - reading serial input to set triac output voltage manually

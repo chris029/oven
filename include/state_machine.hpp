@@ -12,7 +12,7 @@ struct Events
     uint8_t short_button_pressed;
     uint8_t long_button_pressed;
     uint8_t heating_up_done;
-    uint8_t short_button_pressed_cnt = 0;
+    int8_t short_button_pressed_cnt = 0;
 };
 
 class StateMachine
