@@ -82,6 +82,10 @@ void StartUp::Execute(StateMachine *sm)
         break;
     }
 
+    Serial << F("Start up time: ") << START_UP_TIME << F("\n");
+    Serial << F("Current timer value: ") << this->state_timer_ms << F("\n");
+    Serial << F("STARTUP Event number: ") << sm->events.short_button_pressed_cnt << F("\n");
+
     if (this->state_timer_ms >= START_UP_TIME)
     {
         sm->SetNextState(sm->available_states->program_1);
@@ -105,7 +109,10 @@ void StartUp::Exit(StateMachine *sm)
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states->start_up);
     sm->device_manager.cartridge_heater.Stop();
-    sm->events.short_button_pressed_cnt--;
+    if (sm->events.short_button_pressed_cnt > 0)
+    {
+        sm->events.short_button_pressed_cnt--;
+    }
 }
 
 // =============== Program 1 ===============================
@@ -120,6 +127,7 @@ void ProgramOne::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1360);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
 }
 
 void ProgramOne::Execute(StateMachine *sm)
@@ -147,6 +155,10 @@ void ProgramOne::Execute(StateMachine *sm)
         }
         break;
     }
+
+    Serial << F("Time for cleaning at: ") << TIME_FOR_CLEANING << F("\n");
+    Serial << F("P1 Current timer value: ") << this->state_timer_ms << F("\n");
+    Serial << F("P1 Event number: ") << sm->events.short_button_pressed_cnt << F("\n");
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
@@ -187,10 +199,12 @@ void ProgramTwo::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1470);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
 }
 
 void ProgramTwo::Execute(StateMachine *sm)
 {
+
     this->IncrementStateTimer();
 
     switch (this->sub_state)
@@ -214,6 +228,10 @@ void ProgramTwo::Execute(StateMachine *sm)
         }
         break;
     }
+
+    Serial << F("Time for cleaning at: ") << TIME_FOR_CLEANING << F("\n");
+    Serial << F("P2 Current timer value: ") << this->state_timer_ms << F("\n");
+    Serial << F("P2 Event number: ") << sm->events.short_button_pressed_cnt << F("\n");
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
@@ -254,6 +272,7 @@ void ProgramThree::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1610);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_3);
 }
 
 void ProgramThree::Execute(StateMachine *sm)
@@ -281,6 +300,10 @@ void ProgramThree::Execute(StateMachine *sm)
         }
         break;
     }
+
+    Serial << F("Time for cleaning at: ") << TIME_FOR_CLEANING << F("\n");
+    Serial << F("P3 Current timer value: ") << this->state_timer_ms << F("\n");
+    Serial << F("P3 Event number: ") << sm->events.short_button_pressed_cnt << F("\n");
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
@@ -321,6 +344,7 @@ void ProgramFour::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1690);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_4);
 }
 
 void ProgramFour::Execute(StateMachine *sm)
@@ -348,6 +372,10 @@ void ProgramFour::Execute(StateMachine *sm)
         }
         break;
     }
+
+    Serial << F("Time for cleaning at: ") << TIME_FOR_CLEANING << F("\n");
+    Serial << F("P4 Current timer value: ") << this->state_timer_ms << F("\n");
+    Serial << F("P4 Event number: ") << sm->events.short_button_pressed_cnt << F("\n");
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
@@ -388,6 +416,7 @@ void ProgramFive::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1850);
+    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_5);
 }
 
 void ProgramFive::Execute(StateMachine *sm)
@@ -415,6 +444,10 @@ void ProgramFive::Execute(StateMachine *sm)
         }
         break;
     }
+
+    Serial << F("Time for cleaning at: ") << TIME_FOR_CLEANING << F("\n");
+    Serial << F("P5 Current timer value: ") << this->state_timer_ms << F("\n");
+    Serial << F("P5 Event number: ") << sm->events.short_button_pressed_cnt << F("\n");
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
@@ -466,6 +499,9 @@ void TurnOff::Execute(StateMachine *sm)
     {
         sm->SetNextState(sm->available_states->idle);
     }
+
+    Serial << F("Turn off at: ") << TURN_OFF_TIME << F("\n");
+    Serial << F("TURN OFF Current timer value: ") << this->state_timer_ms << F("\n");
 }
 
 void TurnOff::Exit(StateMachine *sm)
@@ -521,9 +557,14 @@ void Cleaning::Execute(StateMachine *sm)
         break;
     }
 
-    if (this->state_timer_ms >= 20000) // 20 s
+    Serial << F("Cleaning time: ") << CLEANING_TIME << F("\n");
+    Serial << F("Current timer value: ") << this->state_timer_ms << F("\n");
+    Serial << F("CLEANING Event number: ") << sm->events.short_button_pressed_cnt << F("\n");
+
+    if (this->state_timer_ms >= CLEANING_TIME) // 20 s
     {
-        sm->SetNextState(sm->available_states->program_1);
+        if (this->sub_state == SubState::STALLING)
+            sm->SetNextState(sm->available_states->program_1);
     }
 }
 
@@ -531,8 +572,11 @@ void Cleaning::Exit(StateMachine *sm)
 {
     Serial << F("CLEANING exit\n");
     this->ClearStateTimer();
+    Serial << F("CLEANING clear timer done.\n");
     sm->SetPreviousState(sm->available_states->cleaning);
+    Serial << F("CLEANING set previous state done.\n");
     sm->device_manager.display.DisplayNextState();
+    Serial << F("CLEANING next state setting done.\n");
 }
 
 // Just in case - reading serial input to set triac output voltage manually

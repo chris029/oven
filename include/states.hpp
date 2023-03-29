@@ -3,10 +3,11 @@
 #include "state_interface.hpp"
 #include "state_machine.hpp"
 
-#define START_UP_TIME 420000         // (7 * 60 * 1000) min * s * ms
-#define TURN_OFF_TIME 300000         // (5 * 60 * 1000) min * s * ms
-#define TIME_FOR_CLEANING 1800000    // (30 * 60 * 1000) min * s * ms
+#define START_UP_TIME 420000         // (7 * 60 * 1000) min * s * ms | test val: 105000
+#define TURN_OFF_TIME 300000         // (5 * 60 * 1000) min * s * ms | test val: 150000
+#define TIME_FOR_CLEANING 1800000    // (30 * 60 * 1000) min * s * ms | test val: 90000
 #define MINIMUM_STATE_DURATION 60000 // (1 * 60 * 1000) min * s * ms
+#define CLEANING_TIME 30000          // (0.5 * 60 * 1000) min * s * ms
 
 #define INITIAL_FILL_UP_DURATION 110000  // (110 * 1000) s * ms
 #define INITIAL_STALLING_DURATION 170000 // (170 * 1000) s * ms
