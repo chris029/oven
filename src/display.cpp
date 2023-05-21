@@ -1,17 +1,5 @@
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-
 #include "display.hpp"
 #include "operators.hpp"
-
-// 0.91'' = 128x32dpi;
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 32 // OLED display height, in pixels
-
-// I2C address : 0x3C
-// Pins in use (default) : A4(SDA), A5(SCL)
-#define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-#define SCREEN_ADDRESS 0x3C
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 

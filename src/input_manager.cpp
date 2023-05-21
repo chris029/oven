@@ -1,12 +1,8 @@
 #include <Arduino.h>
 
 #include "input_manager.hpp"
+#include "state_machine.hpp"
 #include "operators.hpp"
-
-#define BUTTON_PIN 10
-#define THERMAL_RELAY_PIN 5
-
-#define LONG_BUTTON_PRESS_CNT 5
 
 InputManager::InputManager(StateMachine *sm)
 {

@@ -1,7 +1,6 @@
 #pragma once
 
 #include "state_interface.hpp"
-#include "state_machine.hpp"
 
 #define START_UP_TIME 420000         // (7 * 60 * 1000) min * s * ms | test val: 105000
 #define TURN_OFF_TIME 300000         // (5 * 60 * 1000) min * s * ms | test val: 150000

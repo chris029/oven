@@ -5,14 +5,17 @@
 #include "input_manager.hpp"
 #include "operators.hpp"
 
-AvailableStates available_states;
-StateMachine state_machine(&available_states);
+StateMachine state_machine;
 Timer main_timer;
 InputManager input_manager(&state_machine);
 
 void setup()
 {
+#if defined(ARDUINO_ARCH_ESP32)
+  Serial.begin(921600);
+#else
   Serial.begin(115200);
+#endif
   main_timer.SetupTimer();
   state_machine.SetupStateMachine();
   input_manager.SetupInputManager();

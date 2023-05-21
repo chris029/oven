@@ -3,8 +3,6 @@
 #include "pellet_spiral.hpp"
 #include "operators.hpp"
 
-#define PELLET_SPIRAL_RELAY 8
-
 PelletSpiral::PelletSpiral()
 {
     pinMode(PELLET_SPIRAL_RELAY, OUTPUT);

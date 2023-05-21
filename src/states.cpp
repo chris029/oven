@@ -1,6 +1,6 @@
 #include "states.hpp"
-
 #include "operators.hpp"
+#include "state_machine.hpp"
 
 // =============== Idle ===============================
 
@@ -13,9 +13,10 @@ void Idle::Enter(StateMachine *sm)
 void Idle::Execute(StateMachine *sm)
 {
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.idle);
+    Serial << F("IDLE...\n");
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->start_up);
+        sm->SetNextState(sm->available_states.start_up);
     }
 }
 
@@ -88,7 +89,7 @@ void StartUp::Execute(StateMachine *sm)
 
     if (this->state_timer_ms >= START_UP_TIME)
     {
-        sm->SetNextState(sm->available_states->program_1);
+        sm->SetNextState(sm->available_states.program_1);
     }
 
     // if (sm->events.short_button_pressed)
@@ -99,7 +100,7 @@ void StartUp::Execute(StateMachine *sm)
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off);
+        sm->SetNextState(sm->available_states.turn_off);
     }
 }
 
@@ -107,7 +108,7 @@ void StartUp::Exit(StateMachine *sm)
 {
     Serial << F("STARTUP exit\n");
     this->ClearStateTimer();
-    sm->SetPreviousState(sm->available_states->start_up);
+    sm->SetPreviousState(sm->available_states.start_up);
     sm->device_manager.cartridge_heater.Stop();
     if (sm->events.short_button_pressed_cnt > 0)
     {
@@ -162,21 +163,21 @@ void ProgramOne::Execute(StateMachine *sm)
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
-        sm->SetNextState(sm->available_states->cleaning);
+        sm->SetNextState(sm->available_states.cleaning);
     }
 
     if (sm->events.short_button_pressed_cnt > 0)
     {
         if (this->state_timer_ms > MINIMUM_STATE_DURATION)
         {
-            sm->SetNextState(sm->available_states->program_2);
+            sm->SetNextState(sm->available_states.program_2);
             sm->events.short_button_pressed_cnt--;
         }
     }
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off);
+        sm->SetNextState(sm->available_states.turn_off);
     }
 }
 
@@ -184,7 +185,7 @@ void ProgramOne::Exit(StateMachine *sm)
 {
     Serial << F("P1 exit\n");
     this->ClearStateTimer();
-    sm->SetPreviousState(sm->available_states->program_1);
+    sm->SetPreviousState(sm->available_states.program_1);
 }
 
 // =============== Program 2 ===============================
@@ -235,21 +236,21 @@ void ProgramTwo::Execute(StateMachine *sm)
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
-        sm->SetNextState(sm->available_states->cleaning);
+        sm->SetNextState(sm->available_states.cleaning);
     }
 
     if (sm->events.short_button_pressed_cnt > 0)
     {
         if (this->state_timer_ms > MINIMUM_STATE_DURATION)
         {
-            sm->SetNextState(sm->available_states->program_3);
+            sm->SetNextState(sm->available_states.program_3);
             sm->events.short_button_pressed_cnt--;
         }
     }
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off);
+        sm->SetNextState(sm->available_states.turn_off);
     }
 }
 
@@ -257,7 +258,7 @@ void ProgramTwo::Exit(StateMachine *sm)
 {
     Serial << F("P2 exit\n");
     this->ClearStateTimer();
-    sm->SetPreviousState(sm->available_states->program_2);
+    sm->SetPreviousState(sm->available_states.program_2);
 }
 
 // =============== Program 3 ===============================
@@ -307,21 +308,21 @@ void ProgramThree::Execute(StateMachine *sm)
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
-        sm->SetNextState(sm->available_states->cleaning);
+        sm->SetNextState(sm->available_states.cleaning);
     }
 
     if (sm->events.short_button_pressed_cnt > 0)
     {
         if (this->state_timer_ms > MINIMUM_STATE_DURATION)
         {
-            sm->SetNextState(sm->available_states->program_4);
+            sm->SetNextState(sm->available_states.program_4);
             sm->events.short_button_pressed_cnt--;
         }
     }
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off);
+        sm->SetNextState(sm->available_states.turn_off);
     }
 }
 
@@ -329,7 +330,7 @@ void ProgramThree::Exit(StateMachine *sm)
 {
     Serial << F("P3 exit\n");
     this->ClearStateTimer();
-    sm->SetPreviousState(sm->available_states->program_3);
+    sm->SetPreviousState(sm->available_states.program_3);
 }
 
 // =============== Program 3 ===============================
@@ -379,21 +380,21 @@ void ProgramFour::Execute(StateMachine *sm)
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
-        sm->SetNextState(sm->available_states->cleaning);
+        sm->SetNextState(sm->available_states.cleaning);
     }
 
     if (sm->events.short_button_pressed_cnt > 0)
     {
         if (this->state_timer_ms > MINIMUM_STATE_DURATION)
         {
-            sm->SetNextState(sm->available_states->program_5);
+            sm->SetNextState(sm->available_states.program_5);
             sm->events.short_button_pressed_cnt--;
         }
     }
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off);
+        sm->SetNextState(sm->available_states.turn_off);
     }
 }
 
@@ -401,7 +402,7 @@ void ProgramFour::Exit(StateMachine *sm)
 {
     Serial << F("P4 exit\n");
     this->ClearStateTimer();
-    sm->SetPreviousState(sm->available_states->program_4);
+    sm->SetPreviousState(sm->available_states.program_4);
 }
 
 // =============== Program 5 ===============================
@@ -451,21 +452,21 @@ void ProgramFive::Execute(StateMachine *sm)
 
     if (this->state_timer_ms >= TIME_FOR_CLEANING)
     {
-        sm->SetNextState(sm->available_states->cleaning);
+        sm->SetNextState(sm->available_states.cleaning);
     }
 
     if (sm->events.short_button_pressed_cnt > 0)
     {
         if (this->state_timer_ms > MINIMUM_STATE_DURATION)
         {
-            sm->SetNextState(sm->available_states->program_1);
+            sm->SetNextState(sm->available_states.program_1);
             sm->events.short_button_pressed_cnt--;
         }
     }
 
     if (sm->events.long_button_pressed)
     {
-        sm->SetNextState(sm->available_states->turn_off);
+        sm->SetNextState(sm->available_states.turn_off);
     }
 }
 
@@ -473,7 +474,7 @@ void ProgramFive::Exit(StateMachine *sm)
 {
     Serial << F("P5 exit\n");
     this->ClearStateTimer();
-    sm->SetPreviousState(sm->available_states->program_5);
+    sm->SetPreviousState(sm->available_states.program_5);
 }
 
 // =============== Turn off ===============================
@@ -497,7 +498,7 @@ void TurnOff::Execute(StateMachine *sm)
 
     if (this->state_timer_ms >= TURN_OFF_TIME)
     {
-        sm->SetNextState(sm->available_states->idle);
+        sm->SetNextState(sm->available_states.idle);
     }
 
     Serial << F("Turn off at: ") << TURN_OFF_TIME << F("\n");
@@ -508,7 +509,7 @@ void TurnOff::Exit(StateMachine *sm)
 {
     Serial << F("TURN OFF exit\n");
     this->ClearStateTimer();
-    sm->SetPreviousState(sm->available_states->turn_off);
+    sm->SetPreviousState(sm->available_states.turn_off);
     sm->device_manager.cartridge_heater.Stop();
     sm->device_manager.pellet_spiral.Stop();
 }
@@ -564,7 +565,7 @@ void Cleaning::Execute(StateMachine *sm)
     if (this->state_timer_ms >= CLEANING_TIME) // 20 s
     {
         if (this->sub_state == SubState::STALLING)
-            sm->SetNextState(sm->available_states->program_1);
+            sm->SetNextState(sm->available_states.program_1);
     }
 }
 
@@ -573,7 +574,7 @@ void Cleaning::Exit(StateMachine *sm)
     Serial << F("CLEANING exit\n");
     this->ClearStateTimer();
     Serial << F("CLEANING clear timer done.\n");
-    sm->SetPreviousState(sm->available_states->cleaning);
+    sm->SetPreviousState(sm->available_states.cleaning);
     Serial << F("CLEANING set previous state done.\n");
     sm->device_manager.display.DisplayNextState();
     Serial << F("CLEANING next state setting done.\n");

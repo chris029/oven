@@ -1,6 +1,14 @@
 #pragma once
 
-#include "state_machine.hpp"
+#if defined(ARDUINO_ARCH_ESP32)
+#define BUTTON_PIN 5
+#define THERMAL_RELAY_PIN 19
+#else
+#define BUTTON_PIN 10
+#define THERMAL_RELAY_PIN 5
+#endif
+
+#define LONG_BUTTON_PRESS_CNT 5
 
 class StateMachine;
 

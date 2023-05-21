@@ -1,11 +1,8 @@
 #include "state_machine.hpp"
 
-#include "operators.hpp"
-
-StateMachine::StateMachine(AvailableStates *avStates)
+StateMachine::StateMachine()
 {
-    available_states = avStates;
-    current_state = &available_states->idle;
+    current_state = &available_states.idle;
 }
 
 void StateMachine::SetupStateMachine()

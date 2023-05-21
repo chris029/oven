@@ -2,8 +2,6 @@
 
 #include "cartridge_heater.hpp"
 
-#define CARTRIDGE_HEATER_RELAY 9
-
 CartridgeHeater::CartridgeHeater()
 {
     pinMode(CARTRIDGE_HEATER_RELAY, OUTPUT);
