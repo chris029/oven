@@ -10,7 +10,9 @@
 #define SCREEN_HEIGHT 32 // OLED display height, in pixels
 
 // I2C address : 0x3C
-// Pins in use (default) : A4(SDA), A5(SCL)
+// Pins in use (default) :
+//  Arduino Nano: A4(SDA), A5(SCL)
+//  ESP32: GPIO21(SDA), GPIO22(SCL)
 #define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
 #define SCREEN_ADDRESS 0x3C
 

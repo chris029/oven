@@ -8,7 +8,7 @@
 
 ### User action prior to compiling
 
-It is necessary to modify RBDdimmer library to save up RAM.
+When using Arduino Nano, it is necessary to modify RBDdimmer library to save up RAM.
 
 Go to RBDmcuAVR.h and set line no. 84 to:
 ```c++
