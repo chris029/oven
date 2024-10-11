@@ -3,9 +3,9 @@
 #include <Arduino.h>
 #include <RBDdimmer.h>
 
-#define PSM_PIN 12
-#define ZC_PIN 2
-#define MAXVALUE 100
+const int MAXVALUE = 100;
+const int zeroCrossPin = 26;
+const int outPin = 25;
 
 // these value were measured with an RPM meter
 // when playing with a triac module
@@ -22,7 +22,7 @@ enum class RPMValues
 
 class ExhaustFan
 {
-    dimmerLamp fan_driver{PSM_PIN};
+    dimmerLamp fan_driver{outPin, zeroCrossPin};
     int real_RPM;
 
 public:

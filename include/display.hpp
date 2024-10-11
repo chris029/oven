@@ -2,6 +2,20 @@
 
 #include <Arduino.h>
 
+#include <Wire.h>
+#include <Adafruit_SSD1306.h>
+
+// 0.91'' = 128x32dpi;
+#define SCREEN_WIDTH 128 // OLED display width, in pixels
+#define SCREEN_HEIGHT 32 // OLED display height, in pixels
+
+// I2C address : 0x3C
+// Pins in use (default) :
+//  Arduino Nano: A4(SDA), A5(SCL)
+//  ESP32: GPIO21(SDA), GPIO22(SCL)
+#define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
+#define SCREEN_ADDRESS 0x3C
+
 struct StateLabels
 {
     String idle = "IDLE...";
@@ -19,10 +33,14 @@ class Display
 {
 public:
     const StateLabels kStateLabel;
-    const String *pStateLabels = &kStateLabel.program_1;
-    uint8_t label_switch_cnt = 0;
+    const String *pStateLabels = &kStateLabel.idle;
+    int8_t label_switch_cnt = 0;
+    String top_label = kStateLabel.idle;
+    String bot_label = kStateLabel.idle;
 
     void SetupDisplay();
     void DisplayState(String label);
     void DisplayNextState();
+    void Draw();
+    void UpdateStateLabel();
 };

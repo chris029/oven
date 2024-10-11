@@ -1,18 +1,14 @@
 #pragma once
 
-#include "state_interface.hpp"
 #include "states.hpp"
 #include "device_manager.hpp"
 
-class State;
-struct AvailableStates;
-
 struct Events
 {
-    uint8_t short_button_pressed;
-    uint8_t long_button_pressed;
-    uint8_t heating_up_done;
-    int8_t short_button_pressed_cnt = 0;
+    int short_button_pressed;
+    int long_button_pressed;
+    int heating_up_done;
+    int short_button_pressed_cnt = 0;
 };
 
 class StateMachine
@@ -21,12 +17,13 @@ class StateMachine
     State *previous_state;
 
 public:
-    uint32_t timer_ms;
+    String current_state_label;
+    int timer_ms;
     Events events;
-    AvailableStates *available_states;
+    AvailableStates available_states;
     DeviceManager device_manager;
 
-    StateMachine(AvailableStates *av_states);
+    StateMachine();
     void SetupStateMachine();
     void Run();
     void SetNextState(State &new_state);

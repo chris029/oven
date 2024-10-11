@@ -1,5 +1,8 @@
-#include "exhaust_fan.hpp"
-#include "operators.hpp"
+#if defined(ARDUINO_ARCH_ESP32)
+#include "exhaust_fan_esp32.hpp"
+#else
+#include "exhaust_fan_arduino.hpp"
+#endif
 
 void ExhaustFan::SetupFanDriver()
 {

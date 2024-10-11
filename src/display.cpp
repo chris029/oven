@@ -1,17 +1,5 @@
-#include <Wire.h>
-#include <Adafruit_SSD1306.h>
-
 #include "display.hpp"
 #include "operators.hpp"
-
-// 0.91'' = 128x32dpi;
-#define SCREEN_WIDTH 128 // OLED display width, in pixels
-#define SCREEN_HEIGHT 32 // OLED display height, in pixels
-
-// I2C address : 0x3C
-// Pins in use (default) : A4(SDA), A5(SCL)
-#define OLED_RESET -1 // Reset pin # (or -1 if sharing Arduino reset pin)
-#define SCREEN_ADDRESS 0x3C
 
 Adafruit_SSD1306 display(SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, OLED_RESET);
 
@@ -31,32 +19,13 @@ void Display::SetupDisplay()
 
 void Display::DisplayState(String label)
 {
-    display.clearDisplay();
-
-    // Normal 1:1 pixel scale
-    display.setTextSize(1);
-    // Start at top-left corner
-    display.setCursor(0, 0);
-    display.println(F("State:\n"));
-    // Draw 2X-scale text
-    display.setTextSize(2);
-    display.print(label);
-    display.display();
+    this->top_label = label;
+    this->Draw();
 }
 
 void Display::DisplayNextState()
 {
     display.clearDisplay();
-
-    // Normal 1:1 pixel scale
-    display.setTextSize(1);
-    // Start at top-left corner
-    display.setCursor(0, 0);
-    display.println(F("State:\n"));
-    // Draw 2X-scale text
-    display.setTextSize(2);
-    display.print(*this->pStateLabels);
-    display.display();
 
     if (this->label_switch_cnt < 4)
     {
@@ -68,4 +37,26 @@ void Display::DisplayNextState()
         this->pStateLabels = &kStateLabel.program_1;
         this->label_switch_cnt = 0;
     }
+
+    this->UpdateStateLabel();
+    this->Draw();
+}
+
+void Display::UpdateStateLabel()
+{
+    this->bot_label = *this->pStateLabels;
+}
+
+void Display::Draw()
+{
+    display.clearDisplay();
+    // Normal 1:1 pixel scale
+    display.setTextSize(1);
+    // Start at top-left corner
+    display.setCursor(0, 0);
+    display.println("Current: " + this->top_label + "\n");
+    // Draw 2X-scale text
+    display.setTextSize(2);
+    display.print(this->bot_label);
+    display.display();
 }
