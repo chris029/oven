@@ -8,6 +8,7 @@ void Idle::Enter(StateMachine *sm)
 {
     Serial << F("IDLE enter\n");
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_IDLE);
+    sm->current_state_label = "IDLE";
 }
 
 void Idle::Execute(StateMachine *sm)
@@ -33,6 +34,10 @@ void StartUp::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
+    sm->device_manager.display.DisplayNextState();
+    sm->device_manager.display.label_switch_cnt = -1;
+    sm->current_state_label = "STARTUP";
+    sub_state = SubState::INITIAL_FILL_UP;
 }
 
 void StartUp::Execute(StateMachine *sm)
@@ -92,12 +97,6 @@ void StartUp::Execute(StateMachine *sm)
         sm->SetNextState(sm->available_states.program_1);
     }
 
-    // if (sm->events.short_button_pressed)
-    // {
-    //     sm->SetNextState(sm->available_states->program_1);
-    //     sm->device_manager.cartridge_heater.Stop();
-    // }
-
     if (sm->events.long_button_pressed)
     {
         sm->SetNextState(sm->available_states.turn_off);
@@ -114,6 +113,10 @@ void StartUp::Exit(StateMachine *sm)
     {
         sm->events.short_button_pressed_cnt--;
     }
+    else
+    {
+        sm->device_manager.display.DisplayNextState();
+    }
 }
 
 // =============== Program 1 ===============================
@@ -128,7 +131,9 @@ void ProgramOne::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1360);
-    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
+    sm->device_manager.display.label_switch_cnt = 0;
+    sm->current_state_label = "P1";
 }
 
 void ProgramOne::Execute(StateMachine *sm)
@@ -200,7 +205,8 @@ void ProgramTwo::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1470);
-    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
+    sm->current_state_label = "P2";
 }
 
 void ProgramTwo::Execute(StateMachine *sm)
@@ -273,7 +279,8 @@ void ProgramThree::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1610);
-    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_3);
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_3);
+    sm->current_state_label = "P3";
 }
 
 void ProgramThree::Execute(StateMachine *sm)
@@ -345,7 +352,8 @@ void ProgramFour::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1690);
-    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_4);
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_4);
+    sm->current_state_label = "P4";
 }
 
 void ProgramFour::Execute(StateMachine *sm)
@@ -417,7 +425,8 @@ void ProgramFive::Enter(StateMachine *sm)
     sm->ClearAllEvents();
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1850);
-    // sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_5);
+    sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_5);
+    sm->current_state_label = "P5";
 }
 
 void ProgramFive::Execute(StateMachine *sm)
@@ -486,10 +495,12 @@ void TurnOff::Enter(StateMachine *sm)
     sm->ClearTimer();
     sm->events.short_button_pressed_cnt = 0;
     sm->device_manager.display.label_switch_cnt = 0;
-    sm->device_manager.display.pStateLabels = &sm->device_manager.display.kStateLabel.program_1;
+    sm->device_manager.display.pStateLabels = &sm->device_manager.display.kStateLabel.turn_off;
+    sm->device_manager.display.UpdateStateLabel();
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.turn_off);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
     sm->device_manager.pellet_spiral.Stop();
+    sm->current_state_label = "TURN_OFF";
 }
 
 void TurnOff::Execute(StateMachine *sm)
@@ -510,6 +521,8 @@ void TurnOff::Exit(StateMachine *sm)
     Serial << F("TURN OFF exit\n");
     this->ClearStateTimer();
     sm->SetPreviousState(sm->available_states.turn_off);
+    sm->device_manager.display.pStateLabels = &sm->device_manager.display.kStateLabel.idle;
+    sm->device_manager.display.UpdateStateLabel();
     sm->device_manager.cartridge_heater.Stop();
     sm->device_manager.pellet_spiral.Stop();
 }
@@ -528,8 +541,11 @@ void Cleaning::Enter(StateMachine *sm)
     sm->ClearTimer();
     sm->device_manager.display.label_switch_cnt = 0;
     sm->device_manager.display.pStateLabels = &sm->device_manager.display.kStateLabel.program_1;
+    sm->device_manager.display.label_switch_cnt = 0;
+    sm->device_manager.display.UpdateStateLabel();
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.cleaning);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
+    sm->current_state_label = "CLEANING";
 }
 
 void Cleaning::Execute(StateMachine *sm)
@@ -567,6 +583,11 @@ void Cleaning::Execute(StateMachine *sm)
         if (this->sub_state == SubState::STALLING)
             sm->SetNextState(sm->available_states.program_1);
     }
+
+    if (sm->events.long_button_pressed)
+    {
+        sm->SetNextState(sm->available_states.turn_off);
+    }
 }
 
 void Cleaning::Exit(StateMachine *sm)
@@ -575,9 +596,6 @@ void Cleaning::Exit(StateMachine *sm)
     this->ClearStateTimer();
     Serial << F("CLEANING clear timer done.\n");
     sm->SetPreviousState(sm->available_states.cleaning);
-    Serial << F("CLEANING set previous state done.\n");
-    sm->device_manager.display.DisplayNextState();
-    Serial << F("CLEANING next state setting done.\n");
 }
 
 // Just in case - reading serial input to set triac output voltage manually

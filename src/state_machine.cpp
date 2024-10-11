@@ -1,8 +1,10 @@
 #include "state_machine.hpp"
+#include "operators.hpp"
 
 StateMachine::StateMachine()
 {
     current_state = &available_states.idle;
+    current_state_label = "IDLE";
 }
 
 void StateMachine::SetupStateMachine()
@@ -29,11 +31,18 @@ State *StateMachine::GetPreviousState()
 
 void StateMachine::Run()
 {
-    if (this->events.short_button_pressed)
+    if (!(this->current_state_label == "IDLE" || this->current_state_label == "TURN_OFF"))
     {
-        this->device_manager.display.DisplayNextState();
-        this->events.short_button_pressed_cnt++;
-        this->events.short_button_pressed = false;
+        if (this->events.short_button_pressed)
+        {
+            if (this->events.short_button_pressed_cnt >= 5)
+            {
+                this->events.short_button_pressed_cnt = 0;
+            }
+            this->events.short_button_pressed_cnt++;
+            this->device_manager.display.DisplayNextState();
+            this->events.short_button_pressed = false;
+        }
     }
     // increment timer based on main timer - default: 100ms
     this->timer_ms += 100;

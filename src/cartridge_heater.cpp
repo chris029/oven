@@ -2,7 +2,7 @@
 
 #include "cartridge_heater.hpp"
 
-CartridgeHeater::CartridgeHeater()
+void CartridgeHeater::SetupHeater()
 {
     pinMode(CARTRIDGE_HEATER_RELAY, OUTPUT);
     // HIGH turns off a relay

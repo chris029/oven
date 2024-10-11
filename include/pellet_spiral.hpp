@@ -10,7 +10,7 @@ class PelletSpiral
 {
 
 public:
-    PelletSpiral();
+    void SetupSpiral();
     void Start();
     void Stop();
 };

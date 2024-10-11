@@ -8,8 +8,8 @@
 #define MINIMUM_STATE_DURATION 60000 // (1 * 60 * 1000) min * s * ms
 #define CLEANING_TIME 30000          // (0.5 * 60 * 1000) min * s * ms
 
-#define INITIAL_FILL_UP_DURATION 110000  // (110 * 1000) s * ms
-#define INITIAL_STALLING_DURATION 170000 // (170 * 1000) s * ms
+#define INITIAL_FILL_UP_DURATION 1100  // 110000  // (110 * 1000) s * ms
+#define INITIAL_STALLING_DURATION 1700 // 170000 // (170 * 1000) s * ms
 
 #define STARTUP_FILL_UP_DURATION 1100  // ms
 #define STARTUP_STALLING_DURATION 2900 // ms
@@ -36,7 +36,7 @@ class Idle : public State
 public:
     void Enter(StateMachine *sm);
     void Execute(StateMachine *sm);
-    void Exit(StateMachine *sm){};
+    void Exit(StateMachine *sm) {};
 };
 
 class StartUp : public State

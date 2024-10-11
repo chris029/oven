@@ -19,32 +19,13 @@ void Display::SetupDisplay()
 
 void Display::DisplayState(String label)
 {
-    display.clearDisplay();
-
-    // Normal 1:1 pixel scale
-    display.setTextSize(1);
-    // Start at top-left corner
-    display.setCursor(0, 0);
-    display.println(F("State:\n"));
-    // Draw 2X-scale text
-    display.setTextSize(2);
-    display.print(label);
-    display.display();
+    this->top_label = label;
+    this->Draw();
 }
 
 void Display::DisplayNextState()
 {
     display.clearDisplay();
-
-    // Normal 1:1 pixel scale
-    display.setTextSize(1);
-    // Start at top-left corner
-    display.setCursor(0, 0);
-    display.println(F("State:\n"));
-    // Draw 2X-scale text
-    display.setTextSize(2);
-    display.print(*this->pStateLabels);
-    display.display();
 
     if (this->label_switch_cnt < 4)
     {
@@ -56,4 +37,26 @@ void Display::DisplayNextState()
         this->pStateLabels = &kStateLabel.program_1;
         this->label_switch_cnt = 0;
     }
+
+    this->UpdateStateLabel();
+    this->Draw();
+}
+
+void Display::UpdateStateLabel()
+{
+    this->bot_label = *this->pStateLabels;
+}
+
+void Display::Draw()
+{
+    display.clearDisplay();
+    // Normal 1:1 pixel scale
+    display.setTextSize(1);
+    // Start at top-left corner
+    display.setCursor(0, 0);
+    display.println("Current: " + this->top_label + "\n");
+    // Draw 2X-scale text
+    display.setTextSize(2);
+    display.print(this->bot_label);
+    display.display();
 }

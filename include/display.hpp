@@ -33,10 +33,14 @@ class Display
 {
 public:
     const StateLabels kStateLabel;
-    const String *pStateLabels = &kStateLabel.program_1;
-    uint8_t label_switch_cnt = 0;
+    const String *pStateLabels = &kStateLabel.idle;
+    int8_t label_switch_cnt = 0;
+    String top_label = kStateLabel.idle;
+    String bot_label = kStateLabel.idle;
 
     void SetupDisplay();
     void DisplayState(String label);
     void DisplayNextState();
+    void Draw();
+    void UpdateStateLabel();
 };

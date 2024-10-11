@@ -9,7 +9,7 @@
 class CartridgeHeater
 {
 public:
-    CartridgeHeater();
+    void SetupHeater();
     void Start();
     void Stop();
 };

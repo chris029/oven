@@ -17,6 +17,7 @@ class StateMachine
     State *previous_state;
 
 public:
+    String current_state_label;
     int timer_ms;
     Events events;
     AvailableStates available_states;
