@@ -7,9 +7,11 @@ StateMachine::StateMachine()
     current_state_label = "IDLE";
 }
 
-void StateMachine::SetupStateMachine()
+void StateMachine::SetupStateMachine(BLECharacteristic *pCharacteristic)
 {
     StateMachine::device_manager.SetupDevices();
+    this->pCharacteristic = pCharacteristic;
+    pCharacteristic->setValue(current_state_label);
 }
 
 void StateMachine::SetNextState(State &state)
@@ -17,6 +19,7 @@ void StateMachine::SetNextState(State &state)
     current_state->Exit(this);
     current_state = &state;
     current_state->Enter(this);
+    pCharacteristic->setValue(current_state_label);
 }
 
 void StateMachine::SetPreviousState(State &state)

@@ -24,11 +24,11 @@ class InputManager
     void CheckButton();
     void CheckSerial();
     void CheckTemperatureRelay();
-    void SetEventShortButtonPress();
-    void SetEventLongButtonPress();
 
 public:
     InputManager(StateMachine *sm);
     void SetupInputManager();
     void CheckInputs();
+    void SetEventShortButtonPress();
+    void SetEventLongButtonPress();
 };
