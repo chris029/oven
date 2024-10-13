@@ -22,6 +22,7 @@ CONTROL_BUTTON         |  GPIO14
 
 #define SERVICE_UUID "47485ae8-4684-407d-b63f-29423b73b115"
 #define CHARACTERISTIC_UUID "08c4243d-23e0-426d-9425-73b201a9cc0a"
+#define INDICATION_UUID "165138d2-92da-490b-b704-6d26f8e7f5d8"
 
 #include "timer.hpp"
 #include "state_machine.hpp"
@@ -35,8 +36,9 @@ InputManager input_manager(&state_machine);
 uint8_t command;
 bool deviceConnected = false;
 
-BLECharacteristic *pCharacteristic;
-BLEService *pService;
+BLECharacteristic *pCharacteristic = NULL;
+BLECharacteristic *pIndCharacteristic = NULL;
+BLEService *pService = NULL;
 
 class MyServerCallbacks : public BLEServerCallbacks
 {
@@ -90,13 +92,23 @@ void setup()
   Serial.begin(115200);
 #endif
   BLEDevice::init("Oven");
+
   BLEServer *pServer = BLEDevice::createServer();
   pServer->setCallbacks(new MyServerCallbacks());
+
   pService = pServer->createService(SERVICE_UUID);
+
   pCharacteristic = pService->createCharacteristic(
-      CHARACTERISTIC_UUID, BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
+      CHARACTERISTIC_UUID,
+      BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE);
   pCharacteristic->setCallbacks(new MyCallbacks());
+
+  pIndCharacteristic = pService->createCharacteristic(
+      INDICATION_UUID,
+      BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_INDICATE);
+
   pService->start();
+
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
   pAdvertising->addServiceUUID(SERVICE_UUID);
   pAdvertising->setScanResponse(true);
@@ -105,7 +117,7 @@ void setup()
   BLEDevice::startAdvertising();
 
   main_timer.SetupTimer();
-  state_machine.SetupStateMachine(pCharacteristic);
+  state_machine.SetupStateMachine(pIndCharacteristic);
   input_manager.SetupInputManager();
 }
 
