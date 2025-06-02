@@ -4,8 +4,8 @@
 #include <RBDdimmer.h>
 
 const int MAXVALUE = 100;
-const int zeroCrossPin = 26;
-const int outPin = 25;
+const int zeroCrossPin = 25;
+const int outPin = 33;
 
 // these value were measured with an RPM meter
 // when playing with a triac module
