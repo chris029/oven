@@ -19,6 +19,7 @@ CONTROL_BUTTON         |  GPIO14
 #include <BLEDevice.h>
 #include <BLEUtils.h>
 #include <BLEServer.h>
+#include <BLE2902.h>
 
 #define SERVICE_UUID "47485ae8-4684-407d-b63f-29423b73b115"
 #define CHARACTERISTIC_UUID "08c4243d-23e0-426d-9425-73b201a9cc0a"
@@ -33,25 +34,24 @@ StateMachine state_machine;
 Timer main_timer;
 InputManager input_manager(&state_machine);
 
-uint8_t command;
-bool deviceConnected = false;
-
 BLECharacteristic *pCharacteristic = NULL;
 BLECharacteristic *pIndCharacteristic = NULL;
 BLEService *pService = NULL;
 
 class MyServerCallbacks : public BLEServerCallbacks
 {
+public:
   void onConnect(BLEServer *pServer)
   {
-    deviceConnected = true;
+    Serial.print("Something connected...");
   };
   void onDisconnect(BLEServer *pServer)
   {
-    deviceConnected = false;
     BLEDevice::startAdvertising();
   }
 };
+
+MyServerCallbacks *myServerCallback;
 
 class MyCallbacks : public BLECharacteristicCallbacks
 {
@@ -60,6 +60,8 @@ class MyCallbacks : public BLECharacteristicCallbacks
     std::string rxValue = pCharacteristic->getValue();
     std::string commandShort = "shortPenis";
     std::string commandLong = "longPenis";
+
+    Serial.print("something");
 
     if (rxValue.length() > 0)
     {
@@ -107,6 +109,8 @@ void setup()
       INDICATION_UUID,
       BLECharacteristic::PROPERTY_READ | BLECharacteristic::PROPERTY_WRITE | BLECharacteristic::PROPERTY_NOTIFY | BLECharacteristic::PROPERTY_INDICATE);
 
+  pIndCharacteristic->addDescriptor(new BLE2902());
+
   pService->start();
 
   BLEAdvertising *pAdvertising = BLEDevice::getAdvertising();
@@ -118,7 +122,7 @@ void setup()
 
   main_timer.SetupTimer();
   state_machine.SetupStateMachine(pIndCharacteristic);
-  input_manager.SetupInputManager();
+  input_manager.SetupInputManager(pIndCharacteristic);
 }
 
 void loop()
@@ -126,4 +130,10 @@ void loop()
   main_timer.WaitForTimer();
   input_manager.CheckInputs();
   state_machine.Run();
+
+  std::string selected_state = std::string(state_machine.device_manager.display.GetSelectedState().c_str());
+  pIndCharacteristic->setValue("SELECTED" + selected_state);
+  pIndCharacteristic->notify();
+  pIndCharacteristic->setValue("CURRENT" + state_machine.current_state_label);
+  pIndCharacteristic->notify();
 }

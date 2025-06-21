@@ -18,8 +18,8 @@
 
 struct StateLabels
 {
-    String idle = "IDLE...";
-    String start_up = "START UP";
+    String idle = "IDLE";
+    String start_up = "START";
     String program_1 = "PROGRAM 1";
     String program_2 = "PROGRAM 2";
     String program_3 = "PROGRAM 3";
@@ -41,6 +41,7 @@ public:
     void SetupDisplay();
     void DisplayState(String label);
     void DisplayNextState();
+    String GetSelectedState();
     void Draw();
     void UpdateStateLabel();
 };

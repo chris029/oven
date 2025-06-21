@@ -42,6 +42,11 @@ void Display::DisplayNextState()
     this->Draw();
 }
 
+String Display::GetSelectedState()
+{
+    return *this->pStateLabels;
+}
+
 void Display::UpdateStateLabel()
 {
     this->bot_label = *this->pStateLabels;

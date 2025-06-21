@@ -1,5 +1,7 @@
 #pragma once
 
+#include <BLECharacteristic.h>
+
 #if defined(ARDUINO_ARCH_ESP32)
 #define BUTTON_PIN 14
 #define THERMAL_RELAY_PIN 19
@@ -20,14 +22,15 @@ class InputManager
     uint8_t button_timer;
     uint8_t button_pressed = false;
     uint8_t button_released = true;
-    StateMachine *sm;
+    BLECharacteristic *pCharacteristic;
     void CheckButton();
     void CheckSerial();
     void CheckTemperatureRelay();
 
 public:
     InputManager(StateMachine *sm);
-    void SetupInputManager();
+    StateMachine *sm;
+    void SetupInputManager(BLECharacteristic *pCharacteristic);
     void CheckInputs();
     void SetEventShortButtonPress();
     void SetEventLongButtonPress();

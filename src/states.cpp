@@ -36,7 +36,7 @@ void StartUp::Enter(StateMachine *sm)
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.start_up);
     sm->device_manager.display.DisplayNextState();
     sm->device_manager.display.label_switch_cnt = -1;
-    sm->current_state_label = "STARTUP";
+    sm->current_state_label = "START";
     sub_state = SubState::INITIAL_FILL_UP;
 }
 
@@ -133,7 +133,7 @@ void ProgramOne::Enter(StateMachine *sm)
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1360);
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_1);
     sm->device_manager.display.label_switch_cnt = 0;
-    sm->current_state_label = "P1";
+    sm->current_state_label = "PROGRAM 1";
 }
 
 void ProgramOne::Execute(StateMachine *sm)
@@ -206,7 +206,7 @@ void ProgramTwo::Enter(StateMachine *sm)
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1470);
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_2);
-    sm->current_state_label = "P2";
+    sm->current_state_label = "PROGRAM 2";
 }
 
 void ProgramTwo::Execute(StateMachine *sm)
@@ -280,7 +280,7 @@ void ProgramThree::Enter(StateMachine *sm)
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1610);
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_3);
-    sm->current_state_label = "P3";
+    sm->current_state_label = "PROGRAM 3";
 }
 
 void ProgramThree::Execute(StateMachine *sm)
@@ -353,7 +353,7 @@ void ProgramFour::Enter(StateMachine *sm)
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1690);
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_4);
-    sm->current_state_label = "P4";
+    sm->current_state_label = "PROGRAM 4";
 }
 
 void ProgramFour::Execute(StateMachine *sm)
@@ -426,7 +426,7 @@ void ProgramFive::Enter(StateMachine *sm)
     sm->ClearTimer();
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_1850);
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.program_5);
-    sm->current_state_label = "P5";
+    sm->current_state_label = "PROGRAM 5";
 }
 
 void ProgramFive::Execute(StateMachine *sm)
@@ -500,7 +500,7 @@ void TurnOff::Enter(StateMachine *sm)
     sm->device_manager.display.DisplayState(sm->device_manager.display.kStateLabel.turn_off);
     sm->device_manager.exhaust_fan.SetRPM(RPMValues::RPM_2660);
     sm->device_manager.pellet_spiral.Stop();
-    sm->current_state_label = "TURN_OFF";
+    sm->current_state_label = "TRUN OFF";
 }
 
 void TurnOff::Execute(StateMachine *sm)

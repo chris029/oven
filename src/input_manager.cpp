@@ -9,10 +9,11 @@ InputManager::InputManager(StateMachine *sm)
     this->sm = sm;
 }
 
-void InputManager::SetupInputManager()
+void InputManager::SetupInputManager(BLECharacteristic *pCharacteristic)
 {
     pinMode(BUTTON_PIN, INPUT_PULLUP);
     // pinMode(THERMAL_RELAY_PIN, INPUT_PULLUP);
+    this->pCharacteristic = pCharacteristic;
 }
 
 void InputManager::CheckInputs()
