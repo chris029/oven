@@ -43,10 +43,11 @@ class MyServerCallbacks : public BLEServerCallbacks
 public:
   void onConnect(BLEServer *pServer)
   {
-    Serial.print("Something connected...");
+    Serial.println("Something connected...");
   };
   void onDisconnect(BLEServer *pServer)
   {
+    Serial.println("Something disconnected...");
     BLEDevice::startAdvertising();
   }
 };
